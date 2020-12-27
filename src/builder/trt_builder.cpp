@@ -7,7 +7,7 @@
 #include <NvInfer.h>
 #include <NvInferPlugin.h>
 #include <NvCaffeParser.h>
-#include <onnx_parser/NvOnnxParser.h>
+#include <NvOnnxParser.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -58,12 +58,13 @@ namespace TRTBuilder {
 		}
 	}
 
-	InputDims::InputDims(int channels, int height, int width){
+	InputDims::InputDims(int batchsize, int channels, int height, int width){
+		this->batchsize_ = batchsize;
 		this->channels_ = channels;
 		this->height_ = height;
 		this->width_ = width;
 	}
-
+	int InputDims::batchsize() const { return this->batchsize_; }
 	int InputDims::channels() const	{return this->channels_;}
 	int InputDims::height() const	{return this->height_;}
 	int InputDims::width() const	{return this->width_;}
@@ -88,10 +89,10 @@ namespace TRTBuilder {
 	bool compileTRT(
 		TRTMode mode,
 		const std::vector<std::string>& outputs,
-		unsigned int maxBatchSize,
+		int maxBatchSize,
 		const ModelSource& source,
 		const std::string& savepath,
-		std::vector<InputDims> inputsDimsSetup) {
+		std::vector<std::vector<int>> inputsDimsSetup) {
 
 		INFOW("Build %s trtmodel.", modeString(mode));
 		shared_ptr<IBuilder> builder(createInferBuilder(gLogger), destroyNV<IBuilder>);
@@ -112,7 +113,7 @@ namespace TRTBuilder {
 		shared_ptr<ICaffeParser> caffeParser;
 		shared_ptr<nvonnxparser::IParser> onnxParser;
 
-		std::shared_ptr<nvcaffeparser1::IPluginFactoryExt> pluginFactory;
+		shared_ptr<nvcaffeparser1::IPluginFactoryExt> pluginFactory;
 		if (source.type() == ModelSourceType_FromCaffe) {
 
 			network = shared_ptr<INetworkDefinition>(builder->createNetwork(), destroyNV<INetworkDefinition>);
@@ -151,18 +152,9 @@ namespace TRTBuilder {
 		}
 		else if(source.type() == ModelSourceType_FromONNX){
 
-			//const auto explicitBatch = 1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH);
-			//network = shared_ptr<INetworkDefinition>(builder->createNetworkV2(explicitBatch), destroyNV<INetworkDefinition>);
-			network = shared_ptr<INetworkDefinition>(builder->createNetwork(), destroyNV<INetworkDefinition>);
-
-			vector<nvinfer1::Dims> dimsSetup;
-			for(int i = 0; i < inputsDimsSetup.size(); ++i){
-				auto& item = inputsDimsSetup[i];
-				dimsSetup.push_back(nvinfer1::Dims3(item.channels(), item.height(), item.width()));
-			}
-			
-			//from onnx is not markOutput
-			onnxParser.reset(nvonnxparser::createParser(*network, dimsSetup, gLogger), destroyNV<nvonnxparser::IParser>);
+			const auto explicitBatch = 1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH);
+			network = shared_ptr<INetworkDefinition>(builder->createNetworkV2(explicitBatch), destroyNV<INetworkDefinition>);
+			onnxParser.reset(nvonnxparser::createParser(*network, gLogger), destroyNV<nvonnxparser::IParser>);
 			if (onnxParser == nullptr) {
 				INFO("Can not create parser.");
 				return false;
@@ -180,6 +172,7 @@ namespace TRTBuilder {
 
 		auto inputTensor = network->getInput(0);
 		auto inputDims = inputTensor->getDimensions();
+		int batchsize = 0;
 		int channel = 0;
 		int height = 0;
 		int width = 0;
@@ -189,19 +182,34 @@ namespace TRTBuilder {
 			height = inputDims.d[1];
 			width = inputDims.d[2];
 		}else if(inputDims.nbDims == 4){
+			batchsize = inputDims.d[0];
 			channel = inputDims.d[1];
 			height = inputDims.d[2];
 			width = inputDims.d[3];
 		}else{
 			LOG(LFATAL) << "unsupport inputDims.nbDims " << inputDims.nbDims;
 		}
+		INFOW("ONNX Input Shape: %d x %d x %d x %d", batchsize, channel, height, width);
 
 		size_t _1_GB = 1 << 30;
-		INFO("input shape: %d x %d x %d", channel, height, width);
-		INFOW("Set max batch size: %d", maxBatchSize);
-		
 		builder->setMaxBatchSize(maxBatchSize);
 		config->setMaxWorkspaceSize(_1_GB);
+
+		IOptimizationProfile *profile = builder->createOptimizationProfile();
+		Dims4 minDim, optDim, maxDim;
+		if (inputsDimsSetup.size() == 3)
+		{
+			minDim = { inputsDimsSetup[0][0], inputsDimsSetup[0][1], inputsDimsSetup[0][2], inputsDimsSetup[0][3] };
+			optDim = { inputsDimsSetup[1][0], inputsDimsSetup[1][1], inputsDimsSetup[1][2], inputsDimsSetup[1][3] };
+			maxDim = { inputsDimsSetup[2][0], inputsDimsSetup[2][1], inputsDimsSetup[2][2], inputsDimsSetup[2][3] };
+		}else {
+			LOG(LFATAL) << "unsupport inputsDimsSetup.size() " << inputsDimsSetup.size();
+		}
+		
+		profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, minDim);
+		profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, optDim);
+		profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, maxDim);
+		config->addOptimizationProfile(profile);
 
 		INFOW("Build engine");
 		shared_ptr<ICudaEngine> engine(builder->buildEngineWithConfig(*network, *config), destroyNV<ICudaEngine>);

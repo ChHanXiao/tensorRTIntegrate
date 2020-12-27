@@ -36,14 +36,15 @@ namespace TRTBuilder {
 
 	class InputDims {
 	public:
-		InputDims(int channels, int height, int width);
+		InputDims(int batchsize, int channels, int height, int width);
 
+		int batchsize() const;
 		int channels() const;
 		int height() const;
 		int width() const;
 
 	private:
-		int channels_, height_, width_;
+		int batchsize_, channels_, height_, width_;
 	};
 
 	enum TRTMode {
@@ -56,10 +57,10 @@ namespace TRTBuilder {
 	bool compileTRT(
 		TRTMode mode,
 		const std::vector<std::string>& outputs,
-		unsigned int batchSize,
+		int maxBatchSize,
 		const ModelSource& source,
 		const std::string& savepath,
-		const std::vector<InputDims> inputsDimsSetup = {});
+		const std::vector<std::vector<int>> inputsDimsSetup = {});
 };
 
 #endif //TRT_BUILDER_HPP

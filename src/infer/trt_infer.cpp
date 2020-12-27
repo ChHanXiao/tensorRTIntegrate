@@ -7,6 +7,7 @@
 #include <NvInfer.h>
 #include <NvCaffeParser.h>
 #include <NvInferPlugin.h>
+#include <NvOnnxParser.h>
 #include <cuda_fp16.h>
 #include <caffeplugin/caffeplugin.hpp>
 
@@ -648,7 +649,10 @@ namespace TRTInfer {
 			bindingsPtr_[i] = orderdBlobs_[i]->gpu();
 
 		void** bindingsptr = bindingsPtr_.data();
-		bool execute_result = context->context_->enqueue(inputBatchSize, bindingsptr, context->stream_, nullptr);
+		//bool execute_result = context->context_->enqueue(inputBatchSize, bindingsptr, context->stream_, nullptr);
+		Dims4 input_dims{ inputBatchSize, inputs_[0]->channel(), inputs_[0]->height(), inputs_[0]->width() };
+		context->context_->setBindingDimensions(0, input_dims);
+		bool execute_result = context->context_->enqueueV2(bindingsptr, context->stream_, nullptr);
 		Assert(execute_result);
 
 		if (sync) {

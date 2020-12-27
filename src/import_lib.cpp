@@ -17,6 +17,7 @@
 #pragma comment(lib, "nvinfer.lib")
 #pragma comment(lib, "nvinfer_plugin.lib")
 #pragma comment(lib, "nvparsers.lib")
+#pragma comment(lib, "nvonnxparser.lib")
 
 #if defined(_DEBUG)
 #pragma comment(lib, "libprotobufd.lib")
