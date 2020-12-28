@@ -1601,6 +1601,46 @@ namespace ccutil{
 		return itr->second;
 	}
 
+	map<int, string> readCOCOLabel(const string &fileName)
+	{
+		map<int, string> coco_label;
+		ifstream file(fileName);
+		if (!file.is_open())
+		{
+			cout << "read file error: " << fileName << endl;
+		}
+		string strLine;
+		int index = 0;
+		while (getline(file, strLine))
+		{
+			coco_label.insert({ index, strLine });
+			index++;
+		}
+		file.close();
+		return coco_label;
+	}
+
+	map<int, string> readImageNetLabel(const string &fileName)
+	{
+		map<int, string> imagenet_label;
+		ifstream file(fileName);
+		if (!file.is_open())
+		{
+			cout << "read file error: " << fileName << endl;
+		}
+		string strLine;
+		while (getline(file, strLine))
+		{
+			int pos1 = strLine.find(":");
+			string first = strLine.substr(0, pos1);
+			int pos2 = strLine.find_last_of("'");
+			string second = strLine.substr(pos1 + 3, pos2 - pos1 - 3);
+			imagenet_label.insert({ atoi(first.c_str()), second });
+		}
+		file.close();
+		return imagenet_label;
+	}
+
 	cv::Mat loadMatrix(FILE* f){
 
 		if (!f) return cv::Mat();

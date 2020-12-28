@@ -7,6 +7,13 @@
 #	pragma comment(lib, "opencv_world346.lib")
 #endif
 
+//导入yaml
+#if defined(_DEBUG)
+#	pragma comment(lib, "yaml-cppd.lib")
+#else
+#	pragma comment(lib, "yaml-cpp.lib")
+#endif
+
 //导入cuda
 #pragma comment(lib, "cuda.lib")
 #pragma comment(lib, "cudart.lib")

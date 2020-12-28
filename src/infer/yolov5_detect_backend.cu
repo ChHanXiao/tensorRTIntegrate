@@ -6,12 +6,14 @@
 
 namespace TRTInfer {
 
-	YOLOv5DetectBackend::YOLOv5DetectBackend(float obj_threshold, int num_classes, int max_objs, CUStream stream) :Backend(stream){
+	YOLOv5DetectBackend::YOLOv5DetectBackend(
+		vector<vector<vector<float>>> anchor_grid, vector<int> strides, float obj_threshold, int num_classes, int max_objs, CUStream stream) :Backend(stream){
 
+		this->anchor_grid_ = anchor_grid;
+		this->strides_ = strides;
 		this->obj_threshold_ = obj_threshold;
 		this->num_classes_ = num_classes;
 		this->max_objs_ = max_objs;
-	
 	}
 
 	static __device__ float sigmoid(float value){
@@ -23,7 +25,7 @@ namespace TRTInfer {
 	}
 
 	struct Anchor{
-		int width[3], height[3];
+		int width[9], height[9];
 	};
 
 	static __global__ void decode_native_impl(float* data,
@@ -87,7 +89,7 @@ namespace TRTInfer {
 
 	void YOLOv5DetectBackend::decode_yolov5(
 		const shared_ptr<TRTInfer::Tensor>& tensor, 
-		int stride, const vector<pair<float, float>>& anchors) {
+		int stride, const vector<vector<float>>& anchors) {
 	
 		float threshold_desigmoid = desigmoid(obj_threshold_);
 		int tensor_width = tensor->width();
@@ -106,8 +108,8 @@ namespace TRTInfer {
 		Anchor anchor;
 	
 		for(int i = 0; i < anchors.size(); ++i){
-			anchor.width[i] = anchors[i].first;
-			anchor.height[i] = anchors[i].second;
+			anchor.width[i] = anchors[i][0];
+			anchor.height[i] = anchors[i][1];
 		}
 	
 		for(int n = 0; n < batchSize; ++n){
@@ -148,9 +150,9 @@ namespace TRTInfer {
 		int batchsize = output1->num();
 		outputs_.resize(batchsize);
 
-		decode_yolov5(output1, strides_[2], anchor_grid_32);
-		decode_yolov5(output2, strides_[1], anchor_grid_16);
-		decode_yolov5(output3, strides_[0],  anchor_grid_8);
+		decode_yolov5(output1, strides_[2], anchor_grid_[2]);
+		decode_yolov5(output2, strides_[1], anchor_grid_[1]);
+		decode_yolov5(output3, strides_[0], anchor_grid_[0]);
 
 		return outputs_;
 	}

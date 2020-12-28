@@ -410,6 +410,8 @@ namespace ccutil{
 	int vocLabel(const string& name);
 	int cocoLabel(const string& name);
 	string cocoName(int label);
+	map<int, string> readCOCOLabel(const string &fileName);
+	map<int, string> readImageNetLabel(const string &fileName);
 
 	enum DrawType : int{
 		CoCo = 0,

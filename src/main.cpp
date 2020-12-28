@@ -52,11 +52,11 @@ int ReadJsonFromFile(const char* filename)
 
 int main() {
 
-#if 1
+#if 0
 	cv::Mat image = cv::imread("imgs/17790319373_bd19b24cfc_k.jpg");
 	std::vector<ccutil::BBox> result;
 
-	YOLOv5 yolov5("configs/yolov5.json");
+	YOLOv5 yolov5("configs/yolov5.yaml");
 	ccutil::Timer time_total;
 	result = yolov5.EngineInference(image);
 	INFO("total time cost = %f", time_total.end());
@@ -68,7 +68,7 @@ int main() {
 #else
 	std::vector<cv::Mat> images{cv::imread("imgs/17790319373_bd19b24cfc_k.jpg"), cv::imread("imgs/www.jpg"),cv::imread("imgs/selfie.jpg") };
 	std::vector<std::vector<ccutil::BBox>> results;
-	YOLOv5 yolov5("configs/yolov5.json");
+	YOLOv5 yolov5("configs/yolov5.yaml");
 	ccutil::Timer time_total;
 	results = yolov5.EngineInferenceOptim(images);
 	INFO("total time cost = %f", time_total.end());

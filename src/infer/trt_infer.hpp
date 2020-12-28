@@ -123,6 +123,7 @@ namespace TRTInfer {
 
 		virtual std::shared_ptr<Tensor> input(int index = 0) = 0;
 		virtual std::shared_ptr<Tensor> output(int index = 0) = 0;
+		virtual int outputNum() = 0;
 		virtual std::shared_ptr<Tensor> tensor(const std::string& name) = 0;
 	};
 

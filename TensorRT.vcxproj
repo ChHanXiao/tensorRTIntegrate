@@ -90,16 +90,16 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>workspace</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>./lean/cuda10.0/include;./lean/cudnn7.6.3;./lean/opencv3.4.6/include;./lean/tensorRT7.0.0.11/include;./lean/onnx/include;./lean/protobuf3.11.4/include;./src;./src/common;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>./lean/tensorRT7.0.0.11/lib;./lean/opencv3.4.6/lib;./lean/cudnn7.6.3;./lean/protobuf3.11.4/lib;./lean/onnx/lib;./lean/cuda10.0/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>./lean/yaml-cpp/include;./lean/cuda10.0/include;./lean/cudnn7.6.3;./lean/opencv3.4.6/include;./lean/tensorRT7.0.0.11/include;./lean/onnx/include;./lean/protobuf3.11.4/include;./src;./src/common;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>./lean/yaml-cpp/lib;./lean/tensorRT7.0.0.11/lib;./lean/opencv3.4.6/lib;./lean/cudnn7.6.3;./lean/protobuf3.11.4/lib;./lean/onnx/lib;./lean/cuda10.0/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>workspace</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>./lean/cuda10.0/include;./lean/cudnn7.6.3;./lean/opencv3.4.6/include;./lean/tensorRT7.0.0.11/include;./lean/onnx/include;./lean/protobuf3.11.4/include;./src;./src/common;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>./lean/tensorRT7.0.0.11/lib;./lean/opencv3.4.6/lib;./lean/cudnn7.6.3;./lean/protobuf3.11.4/lib;./lean/onnx/lib;./lean/cuda10.0/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>./lean/yaml-cpp/include;./lean/cuda10.0/include;./lean/cudnn7.6.3;./lean/opencv3.4.6/include;./lean/tensorRT7.0.0.11/include;./lean/onnx/include;./lean/protobuf3.11.4/include;./src;./src/common;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>./lean/yaml-cpp/lib;./lean/tensorRT7.0.0.11/lib;./lean/opencv3.4.6/lib;./lean/cudnn7.6.3;./lean/protobuf3.11.4/lib;./lean/onnx/lib;./lean/cuda10.0/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -113,6 +113,7 @@
       <OpenMPSupport>false</OpenMPSupport>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,6 +138,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <OpenMPSupport>false</OpenMPSupport>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

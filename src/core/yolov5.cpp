@@ -1,6 +1,30 @@
 #include "yolov5.h"
 
-YOLOv5::YOLOv5(const string &config_file) : Detection(config_file){}
+YOLOv5::YOLOv5(const string &config_file){
+	YAML::Node root = YAML::LoadFile(config_file);
+	YAML::Node config = root["yolov5s"];
+	onnx_file_ = config["onnx_file"].as<std::string>();
+	engine_file_ = config["engine_file"].as<std::string>();
+	labels_file_ = config["labels_file"].as<std::string>();
+	maxBatchSize_ = config["maxBatchSize"].as<int>();
+	input_minDim_ = config["input_minDim"].as<std::vector<int>>();
+	input_optDim_ = config["input_optDim"].as<std::vector<int>>();
+	input_maxDim_ = config["input_maxDim"].as<std::vector<int>>();
+	strides_ = config["strides"].as<std::vector<int>>();
+	num_anchors_ = config["num_anchors"].as<std::vector<int>>();
+	anchor_grid_ = config["anchors"].as<vector<vector<vector<float>>>>();
+	obj_threshold_ = config["obj_threshold"].as<float>();
+	nms_threshold_ = config["nms_threshold"].as<float>();
+	max_objs_ = config["max_objs"].as<int>();
+	num_classes_ = config["num_classes"].as<int>();
+	mean_ = config["mean"].as<std::vector<float>>();
+	std_ = config["std"].as<std::vector<float>>();
+	detect_labels_ = ccutil::readCOCOLabel(labels_file_);
+	assert(strides_.size() == num_anchors_.size());
+	assert(num_classes_ == detect_labels_.size());
+
+	LoadEngine();
+}
 
 YOLOv5::~YOLOv5(){}
 
@@ -13,7 +37,7 @@ float sigmoid(float value) {
 }
 
 struct Anchor {
-	int width[3], height[3];
+	int width[9], height[9];
 };
 
 static Rect decodeBox_yolov5(float dx, float dy, float dw, float dh, float cellx, float celly, int stride, int anchorWidth, int anchorHeight, Size netSize) {
@@ -31,7 +55,7 @@ static Rect decodeBox_yolov5(float dx, float dy, float dw, float dh, float cellx
 }
 
 void decode_yolov5(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
-	const vector<pair<float, float>>& anchors, vector<ccutil::BBox> &bboxs, Size netInputSize) {
+	const vector<vector<float>>& anchors, vector<ccutil::BBox> &bboxs, Size netInputSize) {
 	int batch = tensor->num();
 	int tensor_channel = tensor->channel();
 	int tensor_width = tensor->width();
@@ -39,8 +63,8 @@ void decode_yolov5(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float
 	int area = tensor_width * tensor_height;
 	Anchor anchor;
 	for (int i = 0; i < anchors.size(); ++i) {
-		anchor.width[i] = anchors[i].first;
-		anchor.height[i] = anchors[i].second;
+		anchor.width[i] = anchors[i][0];
+		anchor.height[i] = anchors[i][1];
 	}
 
 	float threshold_desigmoid = desigmoid(threshold);
@@ -89,24 +113,28 @@ vector<ccutil::BBox> YOLOv5::EngineInference(const Mat& image) {
 		INFO("EngineInference failure, model is nullptr");
 		return vector<ccutil::BBox>();
 	}
+	ccutil::Timer time_preprocess;
 	engine_->input()->resize(1);
 	Size netInputSize = engine_->input()->size();
 	Size imageSize = image.size();
 	preprocessImageToTensor(image, 0, engine_->input());
-
+	INFO("preprocess time cost = %f", time_preprocess.end());
+	ccutil::Timer time_forward;
 	engine_->forward();
+	INFO("forward time cost = %f", time_forward.end());
+	ccutil::Timer time_decode;
 	auto output1 = engine_->output(2);
 	auto output2 = engine_->output(1);
 	auto output3 = engine_->output(0);
 	vector<ccutil::BBox> bboxs;
 
-	decode_yolov5(output1, strides_[2], obj_threshold_, num_classes_, anchor_grid_32, bboxs, netInputSize);
-	decode_yolov5(output2, strides_[1], obj_threshold_, num_classes_, anchor_grid_16, bboxs, netInputSize);
-	decode_yolov5(output3, strides_[0], obj_threshold_, num_classes_, anchor_grid_8, bboxs, netInputSize);
+	decode_yolov5(output1, strides_[2], obj_threshold_, num_classes_, anchor_grid_[2], bboxs, netInputSize);
+	decode_yolov5(output2, strides_[1], obj_threshold_, num_classes_, anchor_grid_[1], bboxs, netInputSize);
+	decode_yolov5(output3, strides_[0], obj_threshold_, num_classes_, anchor_grid_[0], bboxs, netInputSize);
 	auto& objs = bboxs;
 	objs = ccutil::nms(objs, nms_threshold_);
 	outPutBox(objs, imageSize, netInputSize);
-
+	INFO("decode time cost = %f", time_decode.end());
 	return bboxs;
 }
 
@@ -129,7 +157,7 @@ vector<vector<ccutil::BBox>> YOLOv5::EngineInferenceOptim(const vector<Mat>& ima
 	auto output1 = engine_->output(2);
 	auto output2 = engine_->output(1);
 	auto output3 = engine_->output(0);
-	TRTInfer::YOLOv5DetectBackend detectBackend(obj_threshold_, num_classes_, max_objs_, engine_->getCUStream());
+	TRTInfer::YOLOv5DetectBackend detectBackend(anchor_grid_, strides_, obj_threshold_, num_classes_, max_objs_, engine_->getCUStream());
 	vector<vector<ccutil::BBox>> bboxs = detectBackend.forwardGPU(output1, output2, output3, imagesSize, netInputSize);
 	for (int i = 0; i < bboxs.size(); ++i) {
 		auto& objs = bboxs[i];

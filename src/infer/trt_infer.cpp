@@ -546,6 +546,7 @@ namespace TRTInfer {
 
 		virtual std::shared_ptr<Tensor> input(int index = 0);
 		virtual std::shared_ptr<Tensor> output(int index = 0);
+		virtual int outputNum();
 		virtual std::shared_ptr<Tensor> tensor(const std::string& name);
 
 	private:
@@ -667,6 +668,9 @@ namespace TRTInfer {
 	std::shared_ptr<Tensor> EngineImpl::output(int index) {
 		Assert(index >= 0 && index < outputs_.size());
 		return outputs_[index];
+	}
+	int EngineImpl::outputNum() {
+		return outputs_.size();
 	}
 
 	int EngineImpl::maxBatchSize() {
