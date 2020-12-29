@@ -54,7 +54,7 @@ static Rect decodeBox_yolov5(float dx, float dy, float dw, float dh, float cellx
 	return Rect(Point(x, y), Point(r + 1, b + 1));
 }
 
-void decode_yolov5(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
+void forwardCPU(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
 	const vector<vector<float>>& anchors, vector<ccutil::BBox> &bboxs, Size netInputSize) {
 	int batch = tensor->num();
 	int tensor_channel = tensor->channel();
@@ -123,14 +123,11 @@ vector<ccutil::BBox> YOLOv5::EngineInference(const Mat& image) {
 	engine_->forward();
 	INFO("forward time cost = %f", time_forward.end());
 	ccutil::Timer time_decode;
-	auto output1 = engine_->output(2);
-	auto output2 = engine_->output(1);
-	auto output3 = engine_->output(0);
 	vector<ccutil::BBox> bboxs;
-
-	decode_yolov5(output1, strides_[2], obj_threshold_, num_classes_, anchor_grid_[2], bboxs, netInputSize);
-	decode_yolov5(output2, strides_[1], obj_threshold_, num_classes_, anchor_grid_[1], bboxs, netInputSize);
-	decode_yolov5(output3, strides_[0], obj_threshold_, num_classes_, anchor_grid_[0], bboxs, netInputSize);
+	for (int i = 0; i < engine_->outputNum(); i++) {
+		auto output = engine_->output(i);
+		forwardCPU(output, strides_[i], obj_threshold_, num_classes_, anchor_grid_[i], bboxs, netInputSize);
+	}
 	auto& objs = bboxs;
 	objs = ccutil::nms(objs, nms_threshold_);
 	outPutBox(objs, imageSize, netInputSize);
@@ -154,11 +151,15 @@ vector<vector<ccutil::BBox>> YOLOv5::EngineInferenceOptim(const vector<Mat>& ima
 		imagesSize.emplace_back(images[i].size());
 	}
 	engine_->forward(false);
-	auto output1 = engine_->output(2);
-	auto output2 = engine_->output(1);
-	auto output3 = engine_->output(0);
-	TRTInfer::YOLOv5DetectBackend detectBackend(anchor_grid_, strides_, obj_threshold_, num_classes_, max_objs_, engine_->getCUStream());
-	vector<vector<ccutil::BBox>> bboxs = detectBackend.forwardGPU(output1, output2, output3, imagesSize, netInputSize);
+
+	vector<vector<ccutil::BBox>> bboxs;
+	bboxs.resize(images.size());
+	TRTInfer::YOLOv5DetectBackend detectBackend(max_objs_, engine_->getCUStream());
+	for (int i = 0; i < engine_->outputNum(); i++) {
+		auto output = engine_->output(i);
+		detectBackend.forwardGPU(output, strides_[i], obj_threshold_, num_classes_, anchor_grid_[i], bboxs, netInputSize);
+	}
+
 	for (int i = 0; i < bboxs.size(); ++i) {
 		auto& objs = bboxs[i];
 		objs = ccutil::nms(objs, nms_threshold_);

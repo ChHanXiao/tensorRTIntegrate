@@ -6,13 +6,8 @@
 
 namespace TRTInfer {
 
-	YOLOv5DetectBackend::YOLOv5DetectBackend(
-		vector<vector<vector<float>>> anchor_grid, vector<int> strides, float obj_threshold, int num_classes, int max_objs, CUStream stream) :Backend(stream){
+	YOLOv5DetectBackend::YOLOv5DetectBackend(int max_objs, CUStream stream):Backend(stream) {
 
-		this->anchor_grid_ = anchor_grid;
-		this->strides_ = strides;
-		this->obj_threshold_ = obj_threshold;
-		this->num_classes_ = num_classes;
 		this->max_objs_ = max_objs;
 	}
 
@@ -87,11 +82,11 @@ namespace TRTInfer {
 		box.score = max_class_confidence;
 	}
 
-	void YOLOv5DetectBackend::decode_yolov5(
-		const shared_ptr<TRTInfer::Tensor>& tensor, 
-		int stride, const vector<vector<float>>& anchors) {
-	
-		float threshold_desigmoid = desigmoid(obj_threshold_);
+
+	void YOLOv5DetectBackend::forwardGPU( shared_ptr<Tensor> tensor, int stride, float threshold, int num_classes,
+		const vector<vector<float>>& anchors, vector<vector<ccutil::BBox>> &bboxs, Size netInputSize) {
+
+		float threshold_desigmoid = desigmoid(threshold);
 		int tensor_width = tensor->width();
 		int tensor_height = tensor->height();
 		int batchSize = tensor->num();
@@ -106,33 +101,33 @@ namespace TRTInfer {
 		auto grid = gridDims(job_count);
 		auto block = blockDims(job_count);
 		Anchor anchor;
-	
-		for(int i = 0; i < anchors.size(); ++i){
+
+		for (int i = 0; i < anchors.size(); ++i) {
 			anchor.width[i] = anchors[i][0];
 			anchor.height[i] = anchors[i][1];
 		}
-	
-		for(int n = 0; n < batchSize; ++n){
-	
+
+		for (int n = 0; n < batchSize; ++n) {
+
 			int* counter = (int*)gpuPtrInput;
 			ccutil::BBox* bboxptr = (ccutil::BBox*)((char*)gpuPtrInput + sizeof(int));
-			
+
 			cudaMemsetAsync(counter, 0, sizeof(int), stream);
-			decode_native_impl<<< grid, block, 0, stream >>>(
+			decode_native_impl << < grid, block, 0, stream >> > (
 				tensor->gpu<float>(n),
-				tensor_width, tensor_height, stride, obj_threshold_, threshold_desigmoid, num_classes_,
+				tensor_width, tensor_height, stride, threshold, threshold_desigmoid, num_classes,
 				anchor, bboxptr, counter, area, max_objs_, job_count);
-	
+
 			cudaMemcpyAsync(cpuPtrInput, gpuPtrInput, objsStoreSize, cudaMemcpyKind::cudaMemcpyDeviceToHost, stream);
-			
+
 			cpuPtrInput += objsStoreSize;
 			gpuPtrInput += objsStoreSize;
 		}
 		cudaStreamSynchronize(stream);
 
 		cpuPtrInput = (char*)cpuPtr;
-		for(int n = 0; n < batchSize; ++n, cpuPtrInput += objsStoreSize){
-			auto& output = outputs_[n];
+		for (int n = 0; n < batchSize; ++n, cpuPtrInput += objsStoreSize) {
+			auto& output = bboxs[n];
 
 			int num = *((int*)cpuPtrInput);
 			num = std::min(num, max_objs_);
@@ -142,18 +137,5 @@ namespace TRTInfer {
 			ccutil::BBox* ptr = (ccutil::BBox*)(cpuPtrInput + sizeof(int));
 			output.insert(output.begin(), ptr, ptr + num);
 		}
-	}
-
-	const vector<vector<ccutil::BBox>>& YOLOv5DetectBackend::forwardGPU(
-		shared_ptr<Tensor> output1, shared_ptr<Tensor> output2, shared_ptr<Tensor> output3, 
-		vector<Size> imagesSize, Size netInputSize) {
-		int batchsize = output1->num();
-		outputs_.resize(batchsize);
-
-		decode_yolov5(output1, strides_[2], anchor_grid_[2]);
-		decode_yolov5(output2, strides_[1], anchor_grid_[1]);
-		decode_yolov5(output3, strides_[0], anchor_grid_[0]);
-
-		return outputs_;
 	}
 };

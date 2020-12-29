@@ -59,3 +59,7 @@ copy export_onnx.py into `yolov5/models` and run `export_onnx.py` to generate `y
 **output3[batch_size,255,20,20]**
 
 转好的onnx模型，提取码：[qnzv](https://pan.baidu.com/s/1prK97E8O0polwqDZg_JULQ ) 
+
+[yolo系列](https://github.com/ultralytics/yolov5)yolov3-spp、yolov4、yolov5后处理方式与yolov5的一样，因为正负样本定义方式和yolov3不同
+
+TODO：动态调整输入大小有点问题
