@@ -7,9 +7,7 @@ YOLOv5::YOLOv5(const string &config_file){
 	engine_file_ = config["engine_file"].as<std::string>();
 	labels_file_ = config["labels_file"].as<std::string>();
 	maxBatchSize_ = config["maxBatchSize"].as<int>();
-	input_minDim_ = config["input_minDim"].as<std::vector<int>>();
-	input_optDim_ = config["input_optDim"].as<std::vector<int>>();
-	input_maxDim_ = config["input_maxDim"].as<std::vector<int>>();
+	input_Dim_ = config["input_Dim"].as< std::vector<std::vector<int>>>();
 	strides_ = config["strides"].as<std::vector<int>>();
 	num_anchors_ = config["num_anchors"].as<std::vector<int>>();
 	anchor_grid_ = config["anchors"].as<vector<vector<vector<float>>>>();
@@ -40,7 +38,7 @@ struct Anchor {
 	int width[9], height[9];
 };
 
-static Rect decodeBox_yolov5(float dx, float dy, float dw, float dh, float cellx, float celly, int stride, int anchorWidth, int anchorHeight, Size netSize) {
+static Rect decodeBox_yolov5(float dx, float dy, float dw, float dh, float cellx, float celly, int stride, int anchorWidth, int anchorHeight) {
 
 	float cx = (dx * 2 - 0.5f + cellx) * stride;
 	float cy = (dy * 2 - 0.5f + celly) * stride;
@@ -54,8 +52,8 @@ static Rect decodeBox_yolov5(float dx, float dy, float dw, float dh, float cellx
 	return Rect(Point(x, y), Point(r + 1, b + 1));
 }
 
-void forwardCPU(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
-	const vector<vector<float>>& anchors, vector<ccutil::BBox> &bboxs, Size netInputSize) {
+void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
+	const vector<vector<float>>& anchors, vector<ccutil::BBox> &bboxs) {
 	int batch = tensor->num();
 	int tensor_channel = tensor->channel();
 	int tensor_width = tensor->width();
@@ -97,7 +95,7 @@ void forwardCPU(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float th
 				float dw = sigmoid(*pbbox);  pbbox += area;
 				float dh = sigmoid(*pbbox);  pbbox += area;
 
-				ccutil::BBox box = decodeBox_yolov5(dx, dy, dw, dh, j, i, stride, anchor.width[conf_channel], anchor.height[conf_channel], netInputSize);
+				ccutil::BBox box = decodeBox_yolov5(dx, dy, dw, dh, j, i, stride, anchor.width[conf_channel], anchor.height[conf_channel]);
 				box.label = max_classes;
 				box.score = max_class_confidence;
 				if (box.area() > 0)
@@ -126,12 +124,14 @@ vector<ccutil::BBox> YOLOv5::EngineInference(const Mat& image) {
 	vector<ccutil::BBox> bboxs;
 	for (int i = 0; i < engine_->outputNum(); i++) {
 		auto output = engine_->output(i);
-		forwardCPU(output, strides_[i], obj_threshold_, num_classes_, anchor_grid_[i], bboxs, netInputSize);
+		postProcessCPU(output, strides_[i], obj_threshold_, num_classes_, anchor_grid_[i], bboxs);
 	}
+	INFO("decode time cost = %f", time_decode.end());
+	ccutil::Timer time_nms;
 	auto& objs = bboxs;
 	objs = ccutil::nms(objs, nms_threshold_);
 	outPutBox(objs, imageSize, netInputSize);
-	INFO("decode time cost = %f", time_decode.end());
+	INFO("nms time cost = %f", time_nms.end());
 	return bboxs;
 }
 
@@ -141,30 +141,35 @@ vector<vector<ccutil::BBox>> YOLOv5::EngineInferenceOptim(const vector<Mat>& ima
 		INFO("EngineInference failure call, model is nullptr");
 		return vector<vector<ccutil::BBox>>();
 	}
-
+	ccutil::Timer time_preprocess;
 	engine_->input()->resize(images.size());
 	Size netInputSize = engine_->input()->size();
 	vector<Size> imagesSize;
-
 	for (int i = 0; i < images.size(); i++) {
 		preprocessImageToTensor(images[i], i, engine_->input());
 		imagesSize.emplace_back(images[i].size());
 	}
-	engine_->forward(false);
+	INFO("preprocess time cost = %f", time_preprocess.end());
 
+	ccutil::Timer time_forward;
+	engine_->forward();
+	INFO("forward time cost = %f", time_forward.end());
+	ccutil::Timer time_decode;
 	vector<vector<ccutil::BBox>> bboxs;
 	bboxs.resize(images.size());
 	TRTInfer::YOLOv5DetectBackend detectBackend(max_objs_, engine_->getCUStream());
 	for (int i = 0; i < engine_->outputNum(); i++) {
 		auto output = engine_->output(i);
-		detectBackend.forwardGPU(output, strides_[i], obj_threshold_, num_classes_, anchor_grid_[i], bboxs, netInputSize);
+		detectBackend.postProcessGPU(output, strides_[i], obj_threshold_, num_classes_, anchor_grid_[i], bboxs);
 	}
-
+	INFO("decode time cost = %f", time_decode.end());
+	ccutil::Timer time_nms;
 	for (int i = 0; i < bboxs.size(); ++i) {
 		auto& objs = bboxs[i];
 		objs = ccutil::nms(objs, nms_threshold_);
 		outPutBox(objs, imagesSize[i], netInputSize);
 	}
+	INFO("nms time cost = %f", time_nms.end());
 	return bboxs;
 }
 

@@ -58,6 +58,9 @@
     <ClCompile Include="src\core\detection.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\nanodet.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\cc_util.hpp">
@@ -106,6 +109,9 @@
       <Filter>src\infer</Filter>
     </ClInclude>
     <ClInclude Include="src\core\detection.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\nanodet.h">
       <Filter>src\core</Filter>
     </ClInclude>
   </ItemGroup>

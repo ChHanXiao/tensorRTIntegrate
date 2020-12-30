@@ -1,12 +1,34 @@
 # **yolov5**模型导出
 
-Tensort7.0.0.11, ONNX模型创建网络和预测都需要用V2版本：
+### pytorch模型转onnx
+
+```python
+torch.onnx.export(model, img, f, verbose=False, opset_version=10, input_names=['images'], output_names=['output'] ,dynamic_axes={"images":{0:"batch_size"}, "output":{0:"batch_size"}})
+```
+转模型时dynamic_axes动态的使用batch_size，tensorRT7.2.2.3，opset_version=10（Tensort7.0.0.11设为10），参考修改[yolov5](https://github.com/ultralytics/yolov5)  修改 [yolo.py](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/workspace/models/export_onnx/export_onnx.py)
+
+copy export_onnx.py into `yolov5/models` and run `export_onnx.py` to generate `yolov5s.onnx` and so on.
+
+选择导出3个尺度的output，导出后尺寸
+
+**output1[batch_size,255,80,80]**
+
+**output2[batch_size,255,40,40]**
+
+**output3[batch_size,255,20,20]**
+
+[yolo系列](https://github.com/ultralytics/yolov5) yolov3-spp、yolov3-tiny、yolov4、yolov5后处理方式与yolov5的一样，和yolov3的区别是正负样本定义方式不同，所以解码有点区别。
+
+### **Tensort调用**
+
+Tensort设置动态输出参数profile时要和导出onnx时dynamic_axes一致（不确定，测试时不一致会报错）
+
+Tensort7.0.0.11之后, ONNX模型创建网络和预测都需要用V2版本：
 
 ```c++
 //创建模型
 const auto explicitBatch = 1U << static_cast<uint32_t>(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH);
     INetworkDefinition *network = builder->createNetworkV2(explicitBatch);
-
 //预测模型
 context_->enqueueV2(buffer_queue_.data(), stream_, nullptr);
 ```
@@ -30,7 +52,7 @@ builder_config->addOptimizationProfile(profile);
 ICudaEngine *engine = builder->buildEngineWithConfig(*network, *builder_config);
 ```
 
-预测之前需要绑定维度，因为pt转onnx时设置的动态batch_size（转换流程见后面）：
+预测之前需要绑定维度，因为pt转onnx时设置的动态batch_size：
 
 ```c++
 //对应参数是batchsize  channel height width   这里只有batchsize是浮动的，其他三个就是网络的输出尺寸
@@ -46,20 +68,4 @@ Dims inputdim = engine_->getBindingDimensions(b); // C*H*W
 input_shape_.Reshape(max_batch_size_, inputdim.d[1], inputdim.d[2], inputdim.d[3]); // [batch_size, C, H, W]
 ```
 
-转模型时动态的使用batch_size，Tensort7.0.0.11,设置 opset_version=10，在[yolov5](https://github.com/ultralytics/yolov5)/models/  修改yolo.py
 
-copy export_onnx.py into `yolov5/models` and run `export_onnx.py` to generate `yolov5s.onnx` and so on.
-
-导出形式是三个尺度的输出
-
-**output1[batch_size,255,80,80]**
-
-**output2[batch_size,255,40,40]**
-
-**output3[batch_size,255,20,20]**
-
-转好的onnx模型，提取码：[qnzv](https://pan.baidu.com/s/1prK97E8O0polwqDZg_JULQ ) 
-
-[yolo系列](https://github.com/ultralytics/yolov5)yolov3-spp、yolov4、yolov5后处理方式与yolov5的一样，因为正负样本定义方式和yolov3不同
-
-TODO：动态调整输入大小有点问题

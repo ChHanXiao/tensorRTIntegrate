@@ -83,8 +83,8 @@ namespace TRTInfer {
 	}
 
 
-	void YOLOv5DetectBackend::forwardGPU( shared_ptr<Tensor> tensor, int stride, float threshold, int num_classes,
-		const vector<vector<float>>& anchors, vector<vector<ccutil::BBox>> &bboxs, Size netInputSize) {
+	void YOLOv5DetectBackend::postProcessGPU( shared_ptr<Tensor> tensor, int stride, float threshold, int num_classes,
+		const vector<vector<float>>& anchors, vector<vector<ccutil::BBox>> &bboxs) {
 
 		float threshold_desigmoid = desigmoid(threshold);
 		int tensor_width = tensor->width();

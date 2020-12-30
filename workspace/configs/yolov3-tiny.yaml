@@ -3,9 +3,7 @@ yolov5s:
     engine_file:    "./models/yolo/yolov3-tiny.trtmodel"
     labels_file:    "./configs/coco.names"
     maxBatchSize:   5
-    input_minDim:   [1,3,640,640]
-    input_optDim:   [1,3,640,640]
-    input_maxDim:   [5,3,640,640]
+    input_Dim:      [[1,3,640,640],[1,3,640,640],[5,3,640,640]]
     strides:        [16, 32]
     num_anchors:    [3,  3]
     anchors:        [[[10.,14.], [23.,27.], [37.,58.]], [[81.,82.], [135.,169.], [344.,319.]]]

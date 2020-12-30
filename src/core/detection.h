@@ -13,6 +13,14 @@ using namespace std;
 using namespace cv;
 
 namespace ObjectDetection {
+
+	typedef struct HeadInfo
+	{
+		std::string cls_layer;
+		std::string dis_layer;
+		int stride;
+	};
+
 	class Detection {
 
 	public:
@@ -28,10 +36,9 @@ namespace ObjectDetection {
 		string engine_file_;
 		string labels_file_;
 		shared_ptr<TRTInfer::Engine> engine_;
+		vector<string> head_out_;
 		int maxBatchSize_;
-		vector<int> input_minDim_;
-		vector<int> input_optDim_;
-		vector<int> input_maxDim_;
+		vector<vector<int>> input_Dim_;
 
 		float obj_threshold_;
 		float nms_threshold_;

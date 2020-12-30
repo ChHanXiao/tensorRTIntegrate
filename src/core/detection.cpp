@@ -16,9 +16,9 @@ namespace ObjectDetection {
 				return;
 			}
 			TRTBuilder::compileTRT(
-				TRTBuilder::TRTMode_FP16, {}, maxBatchSize_,
+				TRTBuilder::TRTMode_FP16, head_out_, maxBatchSize_,
 				TRTBuilder::ModelSource(onnx_file_), engine_file_,
-				{ input_minDim_, input_optDim_, input_maxDim_ }
+				input_Dim_
 			);
 		}
 		INFO("load model: %s", engine_file_.c_str());

@@ -17,6 +17,7 @@
     <ClCompile Include="src\common\json.cpp" />
     <ClCompile Include="src\common\trt_common.cpp" />
     <ClCompile Include="src\core\detection.cpp" />
+    <ClCompile Include="src\core\nanodet.cpp" />
     <ClCompile Include="src\core\yolov5.cpp" />
     <ClCompile Include="src\import_lib.cpp" />
     <ClCompile Include="src\infer\trt_infer.cpp" />
@@ -34,6 +35,7 @@
     <ClInclude Include="src\common\json.hpp" />
     <ClInclude Include="src\common\trt_common.hpp" />
     <ClInclude Include="src\core\detection.h" />
+    <ClInclude Include="src\core\nanodet.h" />
     <ClInclude Include="src\core\yolov5.h" />
     <ClInclude Include="src\infer\task_pool.hpp" />
     <ClInclude Include="src\infer\trt_backend.hpp" />
@@ -75,7 +77,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.0.props" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.0.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -90,16 +92,16 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>workspace</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>./lean/yaml-cpp/include;./lean/cuda10.0/include;./lean/cudnn7.6.3;./lean/opencv3.4.6/include;./lean/tensorRT7.0.0.11/include;./lean/onnx/include;./lean/protobuf3.11.4/include;./src;./src/common;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>./lean/yaml-cpp/lib;./lean/tensorRT7.0.0.11/lib;./lean/opencv3.4.6/lib;./lean/cudnn7.6.3;./lean/protobuf3.11.4/lib;./lean/onnx/lib;./lean/cuda10.0/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>./lean/yaml-cpp/include;./lean/cuda11.0/include;./lean/cudnn8.0.5;./lean/opencv3.4.6/include;./lean/tensorRT7.2.2.3/include;./lean/onnx/include;./lean/protobuf3.11.4/include;./src;./src/common;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>./lean/yaml-cpp/lib;./lean/tensorRT7.2.2.3/lib;./lean/opencv3.4.6/lib;./lean/cudnn8.0.5;./lean/protobuf3.11.4/lib;./lean/onnx/lib;./lean/cuda11.0/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>workspace</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>./lean/yaml-cpp/include;./lean/cuda10.0/include;./lean/cudnn7.6.3;./lean/opencv3.4.6/include;./lean/tensorRT7.0.0.11/include;./lean/onnx/include;./lean/protobuf3.11.4/include;./src;./src/common;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>./lean/yaml-cpp/lib;./lean/tensorRT7.0.0.11/lib;./lean/opencv3.4.6/lib;./lean/cudnn7.6.3;./lean/protobuf3.11.4/lib;./lean/onnx/lib;./lean/cuda10.0/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>./lean/yaml-cpp/include;./lean/cuda11.0/include;./lean/cudnn8.0.5;./lean/opencv3.4.6/include;./lean/tensorRT7.2.2.3/include;./lean/onnx/include;./lean/protobuf3.11.4/include;./src;./src/common;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>./lean/yaml-cpp/lib;./lean/tensorRT7.2.2.3/lib;./lean/opencv3.4.6/lib;./lean/cudnn8.0.5;./lean/protobuf3.11.4/lib;./lean/onnx/lib;./lean/cuda11.0/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -153,6 +155,6 @@
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.0.targets" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.0.targets" />
   </ImportGroup>
 </Project>

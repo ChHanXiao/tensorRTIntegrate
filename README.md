@@ -1,10 +1,11 @@
 日志
 
+- 更新库cuda11.0、cudnn8.0.5、tensorRT7.2.2.3，[转onnx流程](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/workspace/models/readme.md) 可用opset_version=12
 - YOLOv3-SPP、YOLOv4检测流程同YOLOv5，仅修改config即可
 - 添加yaml读取配置文件
-
 - YOLOv5直接使用版
 
+=======================================================================
 
 =======================================================================
 

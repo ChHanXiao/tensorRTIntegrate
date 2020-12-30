@@ -16,8 +16,8 @@ namespace TRTInfer {
 	public:
 		YOLOv5DetectBackend(int max_objs, CUStream stream = nullptr);
 
-		void forwardGPU(shared_ptr<Tensor> output, int stride, float threshold, int num_classes,
-			const vector<vector<float>>& anchors, vector<vector<ccutil::BBox>> &bboxs, Size netInputSize);
+		void postProcessGPU(shared_ptr<Tensor> output, int stride, float threshold, int num_classes,
+			const vector<vector<float>>& anchors, vector<vector<ccutil::BBox>> &bboxs);
 
 	private:
 		int max_objs_;
