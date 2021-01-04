@@ -12,7 +12,7 @@ using namespace cv;
 
 namespace TRTInfer {
 
-	class YOLOv5DetectBackend : public Backend{
+	class YOLOv5DetectBackend : public Backend {
 	public:
 		YOLOv5DetectBackend(int max_objs, CUStream stream = nullptr);
 

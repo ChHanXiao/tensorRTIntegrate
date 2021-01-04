@@ -40,7 +40,7 @@ namespace TRTInfer {
 		virtual ~Tensor();
 
 		inline DataType type() const { return dtType_; }
-		inline std::vector<int> dims() const { return {num_, channel_, height_, width_}; }
+		inline std::vector<int> dims() const { return { num_, channel_, height_, width_ }; }
 		inline cv::Size size() const { return cv::Size(width_, height_); }
 		inline int offset(int n = 0, int c = 0, int h = 0, int w = 0) { return ((n * this->channel_ + c) * this->height_ + h) * this->width_ + w; }
 		inline int num() const { return num_; }
@@ -75,7 +75,7 @@ namespace TRTInfer {
 		inline const void* gpu() const { ((Tensor*)this)->toGPU(); return device_; }
 		inline void* cpu() { toCPU(); return host_; }
 		inline void* gpu() { toGPU(); return device_; }
-		
+
 		template<typename DataT> inline const DataT* cpu() const { ((Tensor*)this)->toCPU(); return (const DataT*)host_; }
 		template<typename DataT> inline const DataT* gpu() const { ((Tensor*)this)->toGPU(); return (const DataT*)device_; }
 		template<typename DataT> inline DataT* cpu() { toCPU(); return (DataT*)host_; }
@@ -87,8 +87,9 @@ namespace TRTInfer {
 
 		void setMat(int n, const cv::Mat& image);
 
-		void setNormMat(int n, const cv::Mat& image, float mean[3], float std[3]);
-		void setNormMatGPU(int n, const cv::Mat& image, float mean[3], float std[3]);
+		//result = (image/scale - mean) / scale
+		void setNormMat(int n, const cv::Mat& image, float mean[3], float std[3], float scale = 1 / 255.0);
+		void setNormMatGPU(int n, const cv::Mat& image, float mean[3], float std[3], float scale = 1 / 255.0);
 
 		//result = (image - mean) * scale
 		void setMatMeanScale(int n, const cv::Mat& image, float mean[3], float scale = 1.0f);

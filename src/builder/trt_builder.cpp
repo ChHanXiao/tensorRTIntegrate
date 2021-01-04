@@ -28,7 +28,8 @@ public:
 		if (severity == Severity::kINTERNAL_ERROR) {
 			INFOE("NVInfer INTERNAL_ERROR: %s", msg);
 			abort();
-		}else if (severity == Severity::kERROR) {
+		}
+		else if (severity == Severity::kERROR) {
 			INFOE("NVInfer ERROR: %s", msg);
 		}
 		else  if (severity == Severity::kWARNING) {
@@ -58,16 +59,16 @@ namespace TRTBuilder {
 		}
 	}
 
-	InputDims::InputDims(int batchsize, int channels, int height, int width){
+	InputDims::InputDims(int batchsize, int channels, int height, int width) {
 		this->batchsize_ = batchsize;
 		this->channels_ = channels;
 		this->height_ = height;
 		this->width_ = width;
 	}
 	int InputDims::batchsize() const { return this->batchsize_; }
-	int InputDims::channels() const	{return this->channels_;}
-	int InputDims::height() const	{return this->height_;}
-	int InputDims::width() const	{return this->width_;}
+	int InputDims::channels() const { return this->channels_; }
+	int InputDims::height() const { return this->height_; }
+	int InputDims::width() const { return this->width_; }
 
 	ModelSource::ModelSource(const std::string& prototxt, const std::string& caffemodel) {
 		this->type_ = ModelSourceType_FromCaffe;
@@ -150,7 +151,7 @@ namespace TRTBuilder {
 				INFO("Warning: network has %d input, maybe have errors", network->getNbInputs());
 			}
 		}
-		else if(source.type() == ModelSourceType_FromONNX){
+		else if (source.type() == ModelSourceType_FromONNX) {
 
 			const auto explicitBatch = 1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH);
 			network = shared_ptr<INetworkDefinition>(builder->createNetworkV2(explicitBatch), destroyNV<INetworkDefinition>);
@@ -177,16 +178,18 @@ namespace TRTBuilder {
 		int height = 0;
 		int width = 0;
 
-		if(inputDims.nbDims == 3){
+		if (inputDims.nbDims == 3) {
 			channel = inputDims.d[0];
 			height = inputDims.d[1];
 			width = inputDims.d[2];
-		}else if(inputDims.nbDims == 4){
+		}
+		else if (inputDims.nbDims == 4) {
 			batchsize = inputDims.d[0];
 			channel = inputDims.d[1];
 			height = inputDims.d[2];
 			width = inputDims.d[3];
-		}else{
+		}
+		else {
 			LOG(LFATAL) << "unsupport inputDims.nbDims " << inputDims.nbDims;
 		}
 		INFOW("ONNX Input Shape: %d x %d x %d x %d", batchsize, channel, height, width);
@@ -208,13 +211,13 @@ namespace TRTBuilder {
 			profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, maxDim);
 
 		}
-		else if(inputsDimsSetup.size() == 1){
+		else if (inputsDimsSetup.size() == 1) {
 			INFO("inputsDimsSetup.size()=%d", inputsDimsSetup.size());
 		}
 		else {
 			LOG(LFATAL) << "unsupport inputsDimsSetup.size() " << inputsDimsSetup.size();
 		}
-		
+
 
 		config->addOptimizationProfile(profile);
 

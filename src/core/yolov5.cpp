@@ -17,6 +17,7 @@ YOLOv5::YOLOv5(const string &config_file){
 	num_classes_ = config["num_classes"].as<int>();
 	mean_ = config["mean"].as<std::vector<float>>();
 	std_ = config["std"].as<std::vector<float>>();
+	scale_ = config["scale"].as<float>();
 	detect_labels_ = ccutil::readCOCOLabel(labels_file_);
 	assert(strides_.size() == num_anchors_.size());
 	assert(num_classes_ == detect_labels_.size());

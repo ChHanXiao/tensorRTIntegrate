@@ -46,7 +46,7 @@ namespace ObjectDetection {
 		int max_objs_;
 		vector<float> mean_;
 		vector<float> std_;
-
+		float scale_;
 	};
 }
 

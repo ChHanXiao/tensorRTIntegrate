@@ -114,6 +114,9 @@
     <ClInclude Include="src\core\nanodet.h">
       <Filter>src\core</Filter>
     </ClInclude>
+    <ClInclude Include="src\infer\nanodet_backend.hpp">
+      <Filter>src\infer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\infer\trt_infer_norm.cu">
@@ -138,6 +141,9 @@
       <Filter>src\caffeplugin\plugins</Filter>
     </CudaCompile>
     <CudaCompile Include="src\infer\yolov5_detect_backend.cu">
+      <Filter>src\infer</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\infer\nanodet_backend.cu">
       <Filter>src\infer</Filter>
     </CudaCompile>
   </ItemGroup>

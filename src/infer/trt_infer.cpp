@@ -53,7 +53,7 @@ namespace TRTInfer {
 		return ok;
 	}
 
-	int dataTypeSize(DataType dt){
+	int dataTypeSize(DataType dt) {
 		switch (dt) {
 		case DataType::dtFloat: return sizeof(float);
 		case DataType::dtHalfloat: return sizeof(halfloat);
@@ -61,7 +61,7 @@ namespace TRTInfer {
 		}
 	}
 
-	const char* Tensor::shapeString(){
+	const char* Tensor::shapeString() {
 		snprintf(this->shapeString_, sizeof(this->shapeString_), "%d x %d x %d x %d", this->num_, this->channel_, this->height_, this->width_);
 		return this->shapeString_;
 	}
@@ -75,7 +75,7 @@ namespace TRTInfer {
 		releaseTempGPUMemory();
 	}
 
-	Tensor::Tensor(const std::vector<int>& dims, DataType dtType):Tensor(dims.size(), dims.data(), dtType){}
+	Tensor::Tensor(const std::vector<int>& dims, DataType dtType) :Tensor(dims.size(), dims.data(), dtType) {}
 
 	Tensor::Tensor(int ndims, const int* dims, DataType dtType) {
 
@@ -89,12 +89,12 @@ namespace TRTInfer {
 		resize(n, c, h, w);
 	}
 
-	Tensor::Tensor(){}
+	Tensor::Tensor() {}
 
 	void Tensor::release() {
 		if (host_) {
 			free(host_);
-			host_ = nullptr; 
+			host_ = nullptr;
 		}
 
 		if (device_) {
@@ -112,12 +112,12 @@ namespace TRTInfer {
 
 	size_t Tensor::count(int start_axis) const {
 
-		int dims[] = { num_, channel_, height_, width_};
+		int dims[] = { num_, channel_, height_, width_ };
 		start_axis = std::max(0, start_axis);
 		start_axis = std::min(3, start_axis);
 
 		int size = 1;
-		for (int i = start_axis; i < 4; ++i) 
+		for (int i = start_axis; i < 4; ++i)
 			size *= dims[i];
 		return size;
 	}
@@ -172,7 +172,7 @@ namespace TRTInfer {
 	void Tensor::resize(int n, int c, int h, int w) {
 
 		bool hasChangeShape = (this->num_ != n || this->channel_ != c || this->height_ != h || this->width_ != w);
-		if(!hasChangeShape) return;
+		if (!hasChangeShape) return;
 
 		n = n == -1 ? this->num_ : n;
 		c = c == -1 ? this->channel_ : c;
@@ -209,8 +209,8 @@ namespace TRTInfer {
 
 	Tensor Tensor::transpose(int axis0, int axis1, int axis2, int axis3) {
 
-		int dims[] = {num_, channel_, height_, width_};
-		int muls[] = {count(1), count(2), count(3), 1};
+		int dims[] = { num_, channel_, height_, width_ };
+		int muls[] = { count(1), count(2), count(3), 1 };
 		Tensor t(dims[axis0], dims[axis1], dims[axis2], dims[axis3], dtType_);
 
 		int esize = elementSize();
@@ -245,7 +245,7 @@ namespace TRTInfer {
 			cuCheck(cudaMemcpy(device_, host_, bytes_, cudaMemcpyHostToDevice));
 		}
 	}
-	
+
 	void Tensor::toCPU(bool copyedIfGPU) {
 
 		if (head_ == DataHead_InCPU)
@@ -297,7 +297,7 @@ namespace TRTInfer {
 		halfloat* dst = convert_memory;
 		float* src = cpu<float>();
 
-		for (int i = 0; i < c; ++i) 
+		for (int i = 0; i < c; ++i)
 			*dst++ = *src++;
 
 		this->dtType_ = DataType::dtHalfloat;
@@ -370,7 +370,7 @@ namespace TRTInfer {
 		else {
 			reshapeLike(other);
 		}
-		
+
 		if (other.head_ == DataHead_InGPU) {
 			if (this->device_ == nullptr) {
 				cuCheck(cudaMalloc(&this->device_, this->bytes_));
@@ -385,27 +385,8 @@ namespace TRTInfer {
 		}
 	}
 
-	void Tensor::setMatMeanScale(int n, const cv::Mat& image, float mean[3], float scale) {
 
-		Assert(image.channels() == 3 && !image.empty() && type() == DataType::dtFloat);
-
-		cv::Mat inputframe = image;
-		if (inputframe.size() != cv::Size(width_, height_))
-			cv::resize(inputframe, inputframe, cv::Size(width_, height_));
-
-		inputframe.convertTo(inputframe, CV_32F);
-		inputframe -= cv::Scalar(mean[0], mean[1], mean[2]);
-		if (scale != 1) inputframe *= scale;
-
-		cv::Mat ms[3];
-		for (int c = 0; c < 3; ++c)
-			ms[c] = cv::Mat(height_, width_, CV_32F, cpu<float>(n, c));
-
-		split(inputframe, ms);
-		Assert((void*)ms[0].data == (void*)cpu<float>(n));
-	}
-
-	void ImageNormMeanStd_forwardGPU(float* d0, float* d1, float* d2, float mean[3], float std[3], unsigned char* src, int nump, cudaStream_t stream);
+	void ImageNormMeanStd_forwardGPU(float* d0, float* d1, float* d2, float mean[3], float std[3], float scale, unsigned char* src, int nump, cudaStream_t stream);
 
 	void* Tensor::getTempGPUMemory(size_t size) {
 		if (tempGPUMemoryLength < size) {
@@ -425,7 +406,7 @@ namespace TRTInfer {
 		}
 	}
 
-	void Tensor::setNormMatGPU(int n, const cv::Mat& image, float mean[3], float std[3]) {
+	void Tensor::setNormMatGPU(int n, const cv::Mat& image, float mean[3], float std[3], float scale) {
 		Assert(image.channels() == 3 && !image.empty() && type() == DataType::dtFloat);
 
 		cv::Mat input = image;
@@ -437,20 +418,20 @@ namespace TRTInfer {
 		cudaMemcpy(normMemory, input.ptr<uchar>(0), chwCount, cudaMemcpyKind::cudaMemcpyHostToDevice);
 
 		toGPU(false);
-		ImageNormMeanStd_forwardGPU(gpu<float>(n, 0), gpu<float>(n, 1), gpu<float>(n, 2), mean, std, normMemory, count(2), nullptr);
+		ImageNormMeanStd_forwardGPU(gpu<float>(n, 0), gpu<float>(n, 1), gpu<float>(n, 2), mean, std, scale, normMemory, count(2), nullptr);
 	}
 
-	void Tensor::setNormMat(int n, const cv::Mat& image, float mean[3], float std[3]) {
+	void Tensor::setNormMat(int n, const cv::Mat& image, float mean[3], float std[3], float scale) {
 
 		Assert(image.channels() == 3 && !image.empty() && type() == DataType::dtFloat);
 		toCPU(false);
 
-		float scale = 1 / 255.0;
+		//float scale = 1 / 255.0;
 		cv::Mat inputframe = image;
-		if(inputframe.size() != cv::Size(width_, height_))
+		if (inputframe.size() != cv::Size(width_, height_))
 			cv::resize(inputframe, inputframe, cv::Size(width_, height_));
-
-		inputframe.convertTo(inputframe, CV_32F, scale);
+		if (scale != 1)
+			inputframe.convertTo(inputframe, CV_32F, scale);
 
 		cv::Mat ms[3];
 		for (int c = 0; c < 3; ++c)
@@ -468,7 +449,7 @@ namespace TRTInfer {
 		cv::Mat image = _image;
 		Assert(!image.empty() && n < num_ && image.channels() == channel_ && CV_MAT_DEPTH(image.type()) == CV_32F && type() == DataType::dtFloat);
 		toCPU(false);
-		
+
 		if (image.size() != cv::Size(width_, height_))
 			cv::resize(image, image, cv::Size(width_, height_));
 
@@ -478,10 +459,30 @@ namespace TRTInfer {
 		}
 
 		vector<cv::Mat> ms(image.channels());
-		for (int i = 0; i < ms.size(); ++i) 
+		for (int i = 0; i < ms.size(); ++i)
 			ms[i] = cv::Mat(height_, width_, CV_32F, cpu<float>(n, i));
 
 		cv::split(image, &ms[0]);
+		Assert((void*)ms[0].data == (void*)cpu<float>(n));
+	}
+
+	void Tensor::setMatMeanScale(int n, const cv::Mat& image, float mean[3], float scale) {
+
+		Assert(image.channels() == 3 && !image.empty() && type() == DataType::dtFloat);
+
+		cv::Mat inputframe = image;
+		if (inputframe.size() != cv::Size(width_, height_))
+			cv::resize(inputframe, inputframe, cv::Size(width_, height_));
+
+		inputframe.convertTo(inputframe, CV_32F);
+		inputframe -= cv::Scalar(mean[0], mean[1], mean[2]);
+		if (scale != 1) inputframe *= scale;
+
+		cv::Mat ms[3];
+		for (int c = 0; c < 3; ++c)
+			ms[c] = cv::Mat(height_, width_, CV_32F, cpu<float>(n, c));
+
+		split(inputframe, ms);
 		Assert((void*)ms[0].data == (void*)cpu<float>(n));
 	}
 
@@ -523,7 +524,7 @@ namespace TRTInfer {
 			runtime_.reset();
 			pluginFactory_.reset();
 
-			if (stream_) {cudaStreamDestroy(stream_);stream_ = nullptr;}
+			if (stream_) { cudaStreamDestroy(stream_); stream_ = nullptr; }
 		}
 
 	public:
@@ -590,7 +591,7 @@ namespace TRTInfer {
 	}
 
 	void EngineImpl::buildEngineInputAndOutputsMapper() {
-		
+
 		EngineContext* context = (EngineContext*)this->context_.get();
 		int nbBindings = context->engine_->getNbBindings();
 
@@ -606,7 +607,7 @@ namespace TRTInfer {
 			Assert(dims.nbDims <= 4);
 
 			int offset = dims.nbDims == 4 ? 0 : 1;
-			int newDims[] = {1, 1, 1, 1};
+			int newDims[] = { 1, 1, 1, 1 };
 
 			memcpy(newDims + offset, dims.d, sizeof(int) * dims.nbDims);
 			auto mapperTensor = new Tensor(4, newDims, TRTInfer::DataType::dtFloat);
@@ -619,7 +620,7 @@ namespace TRTInfer {
 				//if is output
 				outputs_.push_back(newTensor);
 			}
-			
+
 			const char* bindingName = context->engine_->getBindingName(i);
 			blobsNameMapper_[bindingName] = i;
 			orderdBlobs_.push_back(newTensor);
@@ -684,7 +685,7 @@ namespace TRTInfer {
 	}
 
 	std::shared_ptr<Engine> loadEngine(const string& file) {
-		
+
 		std::shared_ptr<Engine> engine(new EngineImpl());
 		if (!engine->load(file))
 			engine.reset();

@@ -1,11 +1,13 @@
-# **yolov5**模型导出
+# 模型导出
+
+[模型文件](https://pan.baidu.com/s/1Rv4QjzMaaW18jhKc628XEw) 提取码：o8pb
 
 ### pytorch模型转onnx
 
 ```python
 torch.onnx.export(model, img, f, verbose=False, opset_version=10, input_names=['images'], output_names=['output'] ,dynamic_axes={"images":{0:"batch_size"}, "output":{0:"batch_size"}})
 ```
-转模型时dynamic_axes动态的使用batch_size，tensorRT7.2.2.3，opset_version=10（Tensort7.0.0.11设为10），参考修改[yolov5](https://github.com/ultralytics/yolov5)  修改 [yolo.py](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/workspace/models/export_onnx/export_onnx.py)
+转模型时dynamic_axes动态的使用batch_size，tensorRT7.2.2.3，opset_version=12（Tensort7.0.0.11设为10），参考修改[yolov5](https://github.com/ultralytics/yolov5)  修改 [yolo.py](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/workspace/models/export_onnx/export_onnx.py)
 
 copy export_onnx.py into `yolov5/models` and run `export_onnx.py` to generate `yolov5s.onnx` and so on.
 

@@ -6,25 +6,25 @@
 
 namespace TRTInfer {
 
-	YOLOv5DetectBackend::YOLOv5DetectBackend(int max_objs, CUStream stream):Backend(stream) {
+	YOLOv5DetectBackend::YOLOv5DetectBackend(int max_objs, CUStream stream) :Backend(stream) {
 
 		this->max_objs_ = max_objs;
 	}
 
-	static __device__ float sigmoid(float value){
+	static __device__ float sigmoid(float value) {
 		return 1 / (1 + exp(-value));
 	}
-	
-	static float desigmoid(float val){
+
+	static float desigmoid(float val) {
 		return -log(1 / val - 1);
 	}
 
-	struct Anchor{
+	struct Anchor {
 		int width[9], height[9];
 	};
 
 	static __global__ void decode_native_impl(float* data,
-		int width, int height, int stride, float threshold, float threshold_desigmoid, int num_classes, 
+		int width, int height, int stride, float threshold, float threshold_desigmoid, int num_classes,
 		Anchor anchor, ccutil::BBox* output, int* counter, int area, int maxobjs, int edge) {
 
 		KERNEL_POSITION;
@@ -32,43 +32,43 @@ namespace TRTInfer {
 		int inner_offset = position % area;
 		int a = position / area;
 		float* ptr = data + (a * (num_classes + 5) + 4) * area + inner_offset;
-	
-		if(*ptr < threshold_desigmoid)
+
+		if (*ptr < threshold_desigmoid)
 			return;
-	
+
 		float obj_confidence = sigmoid(*ptr);
 		float* pclasses = ptr + area;
 		float max_class_confidence = *pclasses;
 		int max_classes = 0;
 		pclasses += area;
-	
-		for(int j = 1; j < num_classes; ++j, pclasses += area){
-			if(*pclasses > max_class_confidence){
+
+		for (int j = 1; j < num_classes; ++j, pclasses += area) {
+			if (*pclasses > max_class_confidence) {
 				max_classes = j;
 				max_class_confidence = *pclasses;
 			}
 		}
-	
+
 		max_class_confidence = sigmoid(max_class_confidence) * obj_confidence;
-		if(max_class_confidence < threshold)
+		if (max_class_confidence < threshold)
 			return;
-	
+
 		int index = atomicAdd(counter, 1);
 		if (index >= maxobjs)
 			return;
-	
+
 		float* pbbox = ptr - 4 * area;
 		float dx = sigmoid(*pbbox);  pbbox += area;
 		float dy = sigmoid(*pbbox);  pbbox += area;
 		float dw = sigmoid(*pbbox);  pbbox += area;
 		float dh = sigmoid(*pbbox);  pbbox += area;
-	
+
 		int cell_x = position % width;
 		int cell_y = (position / width) % height;
 		float cx = (dx * 2 - 0.5f + cell_x) * stride;
 		float cy = (dy * 2 - 0.5f + cell_y) * stride;
-		float w =  pow(dw * 2, 2) * anchor.width[a];
-		float h =  pow(dh * 2, 2) * anchor.height[a];
+		float w = pow(dw * 2, 2) * anchor.width[a];
+		float h = pow(dh * 2, 2) * anchor.height[a];
 		float x = cx - w * 0.5f;
 		float y = cy - h * 0.5f;
 		float r = cx + w * 0.5f;
@@ -83,7 +83,7 @@ namespace TRTInfer {
 	}
 
 
-	void YOLOv5DetectBackend::postProcessGPU( shared_ptr<Tensor> tensor, int stride, float threshold, int num_classes,
+	void YOLOv5DetectBackend::postProcessGPU(shared_ptr<Tensor> tensor, int stride, float threshold, int num_classes,
 		const vector<vector<float>>& anchors, vector<vector<ccutil::BBox>> &bboxs) {
 
 		float threshold_desigmoid = desigmoid(threshold);
