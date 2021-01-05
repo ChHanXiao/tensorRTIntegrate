@@ -55,6 +55,7 @@ static Rect decodeBox_yolov5(float dx, float dy, float dw, float dh, float cellx
 
 void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
 	const vector<vector<float>>& anchors, vector<ccutil::BBox> &bboxs) {
+
 	int batch = tensor->num();
 	int tensor_channel = tensor->channel();
 	int tensor_width = tensor->width();
@@ -133,6 +134,7 @@ vector<ccutil::BBox> YOLOv5::EngineInference(const Mat& image) {
 	objs = ccutil::nms(objs, nms_threshold_);
 	outPutBox(objs, imageSize, netInputSize);
 	INFO("nms time cost = %f", time_nms.end());
+
 	return bboxs;
 }
 
@@ -171,6 +173,7 @@ vector<vector<ccutil::BBox>> YOLOv5::EngineInferenceOptim(const vector<Mat>& ima
 		outPutBox(objs, imagesSize[i], netInputSize);
 	}
 	INFO("nms time cost = %f", time_nms.end());
+
 	return bboxs;
 }
 

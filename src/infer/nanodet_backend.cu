@@ -19,7 +19,6 @@ namespace TRTInfer {
 		return -log(1 / val - 1);
 	}
 
-
 	static __global__ void decode_native_impl(float* cls, float* loc,
 		int width, int height, int stride, float threshold, int num_classes,
 		ccutil::BBox* output, int* counter, int maxobjs, int reg_max, int edge) {
@@ -132,7 +131,7 @@ namespace TRTInfer {
 		cpuPtrInput = (char*)cpuPtr;
 		for (int n = 0; n < batchSize; ++n, cpuPtrInput += objsStoreSize) {
 			auto& output = bboxs[n];
-
+			//output.clear();
 			int num = *((int*)cpuPtrInput);
 			num = std::min(num, max_objs_);
 			if (num == 0)

@@ -61,6 +61,9 @@
     <ClCompile Include="src\core\nanodet.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\centerface.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\cc_util.hpp">
@@ -117,6 +120,12 @@
     <ClInclude Include="src\infer\nanodet_backend.hpp">
       <Filter>src\infer</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\centerface.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\infer\centerface_backend.hpp">
+      <Filter>src\infer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\infer\trt_infer_norm.cu">
@@ -144,6 +153,9 @@
       <Filter>src\infer</Filter>
     </CudaCompile>
     <CudaCompile Include="src\infer\nanodet_backend.cu">
+      <Filter>src\infer</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\infer\centerface_backend.cu">
       <Filter>src\infer</Filter>
     </CudaCompile>
   </ItemGroup>

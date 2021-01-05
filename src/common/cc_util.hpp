@@ -70,6 +70,13 @@ namespace ccutil{
 		string filename; string classname;
 	};
 
+	struct FaceBox : BBox {
+		cv::Point2f landmark[5];
+
+		FaceBox() {}
+		FaceBox(const ccutil::BBox& other) :ccutil::BBox(other) {}
+	};
+
 	string tostr(int val);
 	string tostr(unsigned int val);
 	string tostr(long val);
@@ -243,7 +250,7 @@ namespace ccutil{
 	vector<BBox> nmsAsClass(const vector<BBox>& objs, float iou_threshold);
 	vector<BBox> nms(vector<BBox>& objs, float iou_threshold);
 	vector<BBox> nmsMinIoU(vector<BBox>& objs, float iou_threshold);
-
+	vector<FaceBox> nms(vector<FaceBox>& objs, float iou_threshold);
 	//bbox softnms with linear method
 	vector<BBox> softnms(vector<BBox>& B, float iou_threshold);
 

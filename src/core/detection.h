@@ -29,6 +29,7 @@ namespace ObjectDetection {
 		void LoadEngine();
 		void preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
 		void outPutBox(vector<ccutil::BBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize = 15 * 15);
+		void outPutBox(vector<ccutil::FaceBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize = 1);
 
 	public:
 		string model_name_;

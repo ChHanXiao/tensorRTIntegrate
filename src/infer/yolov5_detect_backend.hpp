@@ -21,7 +21,6 @@ namespace TRTInfer {
 
 	private:
 		int max_objs_;
-		//vector<vector<ccutil::BBox>> outputs_;
 	};
 };
 

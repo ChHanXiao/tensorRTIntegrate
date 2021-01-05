@@ -1,3 +1,3 @@
 # Lean
 
-编译好的protobuf Windows版本：http://zifuture.com:1000/fs/25.shared/lean.zip
+[库文件](https://pan.baidu.com/s/1Rv4QjzMaaW18jhKc628XEw) 提取码：o8pb

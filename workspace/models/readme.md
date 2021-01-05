@@ -7,19 +7,7 @@
 ```python
 torch.onnx.export(model, img, f, verbose=False, opset_version=10, input_names=['images'], output_names=['output'] ,dynamic_axes={"images":{0:"batch_size"}, "output":{0:"batch_size"}})
 ```
-转模型时dynamic_axes动态的使用batch_size，tensorRT7.2.2.3，opset_version=12（Tensort7.0.0.11设为10），参考修改[yolov5](https://github.com/ultralytics/yolov5)  修改 [yolo.py](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/workspace/models/export_onnx/export_onnx.py)
-
-copy export_onnx.py into `yolov5/models` and run `export_onnx.py` to generate `yolov5s.onnx` and so on.
-
-选择导出3个尺度的output，导出后尺寸
-
-**output1[batch_size,255,80,80]**
-
-**output2[batch_size,255,40,40]**
-
-**output3[batch_size,255,20,20]**
-
-[yolo系列](https://github.com/ultralytics/yolov5) yolov3-spp、yolov3-tiny、yolov4、yolov5后处理方式与yolov5的一样，和yolov3的区别是正负样本定义方式不同，所以解码有点区别。
+转模型时dynamic_axes动态的使用batch_size，tensorRT7.2.2.3，opset_version=12（Tensort7.0.0.11设为10）
 
 ### **Tensort调用**
 

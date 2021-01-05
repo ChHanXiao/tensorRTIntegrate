@@ -16,7 +16,7 @@ namespace ObjectDetection {
 				return;
 			}
 			TRTBuilder::compileTRT(
-				TRTBuilder::TRTMode_FP32, head_out_, maxBatchSize_,
+				TRTBuilder::TRTMode_FP16, head_out_, maxBatchSize_,
 				TRTBuilder::ModelSource(onnx_file_), engine_file_,
 				input_Dim_
 			);
@@ -61,6 +61,31 @@ namespace ObjectDetection {
 
 			if (obj.area() > minsize)
 				keep.emplace_back(obj.x, obj.y, obj.r, obj.b, obj.score, obj.label);
+		}
+		objs = keep;
+	}
+	void Detection::outPutBox(vector<ccutil::FaceBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize) {
+		float sw = netInputSize.width / (float)imageSize.width;
+		float sh = netInputSize.height / (float)imageSize.height;
+		float scale_size = std::min(sw, sh);
+
+		vector<ccutil::FaceBox> keep;
+		
+ 		for (int i = 0; i < objs.size(); ++i) {
+			auto& obj = objs[i];
+			obj.x = std::max(0.0f, std::min(obj.x / scale_size, imageSize.width - 1.0f));
+			obj.y = std::max(0.0f, std::min(obj.y / scale_size, imageSize.height - 1.0f));
+			obj.r = std::max(0.0f, std::min(obj.r / scale_size, imageSize.width - 1.0f));
+			obj.b = std::max(0.0f, std::min(obj.b / scale_size, imageSize.height - 1.0f));
+
+			for (auto &k : obj.landmark) {
+				k.x /= scale_size;
+				k.y /= scale_size;
+			}
+
+			if (obj.area() > minsize)
+				keep.emplace_back(obj);
+				
 		}
 		objs = keep;
 	}

@@ -1,25 +1,5 @@
 #include "NanoDet.h"
 
-
-template<typename _Tp>
-int activation_function_softmax(const _Tp* src, _Tp* dst, int length)
-{
-	const _Tp alpha = *std::max_element(src, src + length);
-	_Tp denominator{ 0 };
-
-	for (int i = 0; i < length; ++i) {
-		dst[i] = exp(src[i] - alpha);
-		denominator += dst[i];
-	}
-
-	for (int i = 0; i < length; ++i) {
-		dst[i] /= denominator;
-	}
-
-	return 0;
-}
-
-
 NanoDet::NanoDet(const string &config_file){
 
 	YAML::Node root = YAML::LoadFile(config_file);
@@ -54,6 +34,38 @@ NanoDet::NanoDet(const string &config_file){
 
 NanoDet::~NanoDet(){}
 
+static float commonExp(float value) {
+
+	float gate = 1;
+	float base = exp(gate);
+	if (fabs(value) < gate)
+		return value * base;
+
+	if (value > 0) {
+		return exp(value);
+	}
+	else {
+		return -exp(-value);
+	}
+}
+
+template<typename _Tp>
+int activation_function_softmax(const _Tp* src, _Tp* dst, int length)
+{
+	const _Tp alpha = *std::max_element(src, src + length);
+	_Tp denominator{ 0 };
+
+	for (int i = 0; i < length; ++i) {
+		dst[i] = commonExp(src[i] - alpha);
+		denominator += dst[i];
+	}
+
+	for (int i = 0; i < length; ++i) {
+		dst[i] /= denominator;
+	}
+
+	return 0;
+}
 
 static Rect decodeBox_nanodet(const float*& pdis_pred, float cellx, float celly, int stride, int reg_max) {
 
@@ -81,7 +93,6 @@ static Rect decodeBox_nanodet(const float*& pdis_pred, float cellx, float celly,
 
 	return Rect(Point(x, y), Point(r + 1, b + 1));
 }
-
 
 void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& cls_tensor, const shared_ptr<TRTInfer::Tensor>& loc_tensor, 
 	int stride, Size netInputSize, float threshold, int num_classes, vector<ccutil::BBox> &bboxs, int reg_max_) {
@@ -147,11 +158,12 @@ vector<ccutil::BBox> NanoDet::EngineInference(const Mat& image) {
 	objs = ccutil::nms(objs, nms_threshold_);
 	outPutBox(objs, imageSize, netInputSize);
 	INFO("nms time cost = %f", time_nms.end());
-	return bboxs;
 
+	return bboxs;
 }
 
 vector<vector<ccutil::BBox>> NanoDet::EngineInferenceOptim(const vector<Mat>& images) {
+
 	if (engine_ == nullptr) {
 		INFO("EngineInference failure call, model is nullptr");
 		return vector<vector<ccutil::BBox>>();
@@ -189,5 +201,6 @@ vector<vector<ccutil::BBox>> NanoDet::EngineInferenceOptim(const vector<Mat>& im
 		outPutBox(objs, imagesSize[i], netInputSize);
 	}
 	INFO("nms time cost = %f", time_nms.end());
+
 	return bboxs;
 }

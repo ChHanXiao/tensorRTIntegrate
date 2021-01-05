@@ -16,6 +16,7 @@
     <ClCompile Include="src\common\cc_util.cpp" />
     <ClCompile Include="src\common\json.cpp" />
     <ClCompile Include="src\common\trt_common.cpp" />
+    <ClCompile Include="src\core\centerface.cpp" />
     <ClCompile Include="src\core\detection.cpp" />
     <ClCompile Include="src\core\nanodet.cpp" />
     <ClCompile Include="src\core\yolov5.cpp" />
@@ -34,9 +35,11 @@
     <ClInclude Include="src\common\cc_util.hpp" />
     <ClInclude Include="src\common\json.hpp" />
     <ClInclude Include="src\common\trt_common.hpp" />
+    <ClInclude Include="src\core\centerface.h" />
     <ClInclude Include="src\core\detection.h" />
     <ClInclude Include="src\core\nanodet.h" />
     <ClInclude Include="src\core\yolov5.h" />
+    <ClInclude Include="src\infer\centerface_backend.hpp" />
     <ClInclude Include="src\infer\nanodet_backend.hpp" />
     <ClInclude Include="src\infer\task_pool.hpp" />
     <ClInclude Include="src\infer\trt_backend.hpp" />
@@ -49,6 +52,7 @@
     <CudaCompile Include="src\caffeplugin\plugins\DCNLayer.cu" />
     <CudaCompile Include="src\caffeplugin\plugins\PlexShuffleLayer.cu" />
     <CudaCompile Include="src\caffeplugin\plugins\TestPlugin.cu" />
+    <CudaCompile Include="src\infer\centerface_backend.cu" />
     <CudaCompile Include="src\infer\nanodet_backend.cu" />
     <CudaCompile Include="src\infer\trt_backend.cpp" />
     <CudaCompile Include="src\infer\trt_infer_norm.cu" />
