@@ -34,21 +34,6 @@ NanoDet::NanoDet(const string &config_file){
 
 NanoDet::~NanoDet(){}
 
-static float commonExp(float value) {
-
-	float gate = 1;
-	float base = exp(gate);
-	if (fabs(value) < gate)
-		return value * base;
-
-	if (value > 0) {
-		return exp(value);
-	}
-	else {
-		return -exp(-value);
-	}
-}
-
 template<typename _Tp>
 int activation_function_softmax(const _Tp* src, _Tp* dst, int length)
 {
@@ -56,7 +41,7 @@ int activation_function_softmax(const _Tp* src, _Tp* dst, int length)
 	_Tp denominator{ 0 };
 
 	for (int i = 0; i < length; ++i) {
-		dst[i] = commonExp(src[i] - alpha);
+		dst[i] = exp(src[i] - alpha);
 		denominator += dst[i];
 	}
 
@@ -108,7 +93,7 @@ void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& cls_tensor, const shared
 		const float* pclasses = cls_tensor->cpu<float>(0, 0, idx);
 		float max_class_confidence = *pclasses;
 		int max_classes = 0;
-		for (int k = 1; k < num_classes; ++k, ++pclasses) {
+		for (int k = 0; k < num_classes; ++k, ++pclasses) {
 			if (*pclasses > max_class_confidence) {
 				max_classes = k;
 				max_class_confidence = *pclasses;

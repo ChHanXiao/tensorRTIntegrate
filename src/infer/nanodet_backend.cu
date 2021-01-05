@@ -28,7 +28,7 @@ namespace TRTInfer {
 		float* pclasses = cls + position * num_classes;
 		float max_class_confidence = *pclasses;
 		int max_classes = 0;
-		for (int j = 1; j < num_classes; ++j, ++pclasses) {
+		for (int j = 0; j < num_classes; ++j, ++pclasses) {
 			if (*pclasses > max_class_confidence) {
 				max_classes = j;
 				max_class_confidence = *pclasses;

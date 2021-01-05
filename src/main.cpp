@@ -11,13 +11,12 @@ int main() {
 
 
 #if 1
-	cv::Mat image = cv::imread("imgs/selfie.jpg");
+	cv::Mat image = cv::imread("imgs/dog.jpg");
 	std::vector<ccutil::BBox> result;
 
 	NanoDet nanodet("configs/nanodet.yaml");
 	ccutil::Timer time_total;
 	result = nanodet.EngineInference(image);
-
 
 	INFO("total time cost = %f", time_total.end());
 	for (int i = 0; i < result.size(); ++i) {
@@ -27,7 +26,7 @@ int main() {
 	imwrite(ccutil::format("results/nanodet.jpg"), image);
 #else
 	//std::vector<cv::Mat> images{ cv::imread("imgs/17790319373_bd19b24cfc_k.jpg"), cv::imread("imgs/www.jpg"),cv::imread("imgs/selfie.jpg"),cv::imread("imgs/000023.jpg") };
-	std::vector<cv::Mat> images{ cv::imread("imgs/17790319373_bd19b24cfc_k.jpg")};
+	std::vector<cv::Mat> images{ cv::imread("imgs/dog.jpg")};
 	std::vector<std::vector<ccutil::BBox>> results;
 	NanoDet nanodet("configs/nanodet.yaml");
 	ccutil::Timer time_total;
@@ -46,14 +45,13 @@ int main() {
 #endif
 
 
-//#if 1
+//#if 0
 //	cv::Mat image = cv::imread("imgs/selfie.jpg");
 //	std::vector<ccutil::FaceBox> result;
 //
 //	CenterFace nanodet("configs/centerface.yaml");
 //	ccutil::Timer time_total;
 //	result = nanodet.EngineInference(image);
-//
 //
 //	INFO("total time cost = %f", time_total.end()/1000);
 //	for (int i = 0; i < result.size(); ++i) {
@@ -72,13 +70,9 @@ int main() {
 //	CenterFace nanodet("configs/centerface.yaml");
 //	ccutil::Timer time_total;
 //
-//	int i = 0;
-//	while (i < 1000) {
-//		results = nanodet.EngineInferenceOptim(images);
-//		i++;
-//	}
+//	results = nanodet.EngineInferenceOptim(images);
 //
-//	INFO("total time cost = %f", time_total.end()/1000);
+//	INFO("total time cost = %f", time_total.end());
 //	for (int j = 0; j < images.size(); ++j) {
 //		auto& objs = results[j];
 //		INFO("objs.length = %d", objs.size());

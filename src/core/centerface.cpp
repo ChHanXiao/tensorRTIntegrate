@@ -27,21 +27,6 @@ CenterFace::CenterFace(const string &config_file) {
 
 CenterFace::~CenterFace() {};
 
-static float commonExp(float value) {
-
-	float gate = 1;
-	float base = exp(gate);
-	if (fabs(value) < gate)
-		return value * base;
-
-	if (value > 0) {
-		return exp(value);
-	}
-	else {
-		return -exp(-value);
-	}
-}
-
 void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& heatmap, const shared_ptr<TRTInfer::Tensor>& wh, 
 	const shared_ptr<TRTInfer::Tensor>& offset, const shared_ptr<TRTInfer::Tensor>& landmark,
 	int stride, float threshold, vector<ccutil::FaceBox> &bboxs) {
@@ -51,8 +36,8 @@ void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& heatmap, const shared_pt
 			float* ohmptr = heatmap->cpu<float>(0, class_, i);
 			for (int j = 0; j < heatmap->width(); ++j) {
 				if (*ohmptr > threshold) {
-					float dh = commonExp(wh->at<float>(0, 0, i, j)) * stride;
-					float dw = commonExp(wh->at<float>(0, 1, i, j)) * stride;
+					float dh = exp(wh->at<float>(0, 0, i, j)) * stride;
+					float dw = exp(wh->at<float>(0, 1, i, j)) * stride;
 					float oy = offset->at<float>(0, 0, i, j);
 					float ox = offset->at<float>(0, 1, i, j);
 
