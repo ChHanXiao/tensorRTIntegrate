@@ -16,7 +16,7 @@ namespace TRTInfer {
 	public:
 		CenterFaceBackend(int max_objs = 100, CUStream stream = nullptr);
 
-		void postProcessGPU(shared_ptr<Tensor> heatmap, shared_ptr<Tensor> scalewh, 
+		void postProcessGPU(shared_ptr<Tensor> heatmap, shared_ptr<Tensor> wh, 
 			shared_ptr<Tensor> offset, shared_ptr<Tensor> landmark,
 			int stride, float threshold, vector<vector<ccutil::FaceBox>> &bboxs);
 

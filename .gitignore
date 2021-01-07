@@ -6,5 +6,4 @@
 **/*.ilk
 **/*.suo
 objs
-/workspace/models
 /workspace/results

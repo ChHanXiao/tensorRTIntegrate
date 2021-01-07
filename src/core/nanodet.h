@@ -10,6 +10,12 @@
 using namespace ObjectDetection;
 
 class NanoDet : public Detection {
+	typedef struct HeadInfo
+	{
+		std::string cls_layer;
+		std::string dis_layer;
+		int stride;
+	};
 public:
 	NanoDet(const string &config_file);
 	~NanoDet();

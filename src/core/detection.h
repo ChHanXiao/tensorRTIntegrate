@@ -14,13 +14,6 @@ using namespace cv;
 
 namespace ObjectDetection {
 
-	typedef struct HeadInfo
-	{
-		std::string cls_layer;
-		std::string dis_layer;
-		int stride;
-	};
-
 	class Detection {
 
 	public:

@@ -1,7 +1,7 @@
 日志
 
+- 添加[retinaface](https://github.com/biubug6/Pytorch_Retinaface)，使用pytorch版，TODO：mxnet版
 - 添加[centerface](https://github.com/Star-Clouds/CenterFace)
-
 - 添加[nanodet](https://github.com/RangiLyu/nanodet)，TODO：动态输入多batch和shufflenet中Reshape层有点问题
 - 更新库[lean](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/lean/README.md)（cuda11.0、cudnn8.0.5、tensorRT7.2.2.3，[转onnx流程](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/workspace/models/readme.md) 可用opset_version=12）
 - YOLOv3-SPP、YOLOv4检测流程同YOLOv5，仅修改config即可

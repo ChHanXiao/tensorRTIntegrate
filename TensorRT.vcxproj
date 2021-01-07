@@ -19,6 +19,7 @@
     <ClCompile Include="src\core\centerface.cpp" />
     <ClCompile Include="src\core\detection.cpp" />
     <ClCompile Include="src\core\nanodet.cpp" />
+    <ClCompile Include="src\core\retinaface.cpp" />
     <ClCompile Include="src\core\yolov5.cpp" />
     <ClCompile Include="src\import_lib.cpp" />
     <ClCompile Include="src\infer\trt_infer.cpp" />
@@ -38,9 +39,11 @@
     <ClInclude Include="src\core\centerface.h" />
     <ClInclude Include="src\core\detection.h" />
     <ClInclude Include="src\core\nanodet.h" />
+    <ClInclude Include="src\core\retinaface.h" />
     <ClInclude Include="src\core\yolov5.h" />
     <ClInclude Include="src\infer\centerface_backend.hpp" />
     <ClInclude Include="src\infer\nanodet_backend.hpp" />
+    <ClInclude Include="src\infer\retinaface_backend.hpp" />
     <ClInclude Include="src\infer\task_pool.hpp" />
     <ClInclude Include="src\infer\trt_backend.hpp" />
     <ClInclude Include="src\infer\trt_infer.hpp" />
@@ -54,6 +57,7 @@
     <CudaCompile Include="src\caffeplugin\plugins\TestPlugin.cu" />
     <CudaCompile Include="src\infer\centerface_backend.cu" />
     <CudaCompile Include="src\infer\nanodet_backend.cu" />
+    <CudaCompile Include="src\infer\retinaface_backend.cu" />
     <CudaCompile Include="src\infer\trt_backend.cpp" />
     <CudaCompile Include="src\infer\trt_infer_norm.cu" />
     <CudaCompile Include="src\infer\yolov5_detect_backend.cu" />
