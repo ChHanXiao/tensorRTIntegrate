@@ -1,5 +1,6 @@
 日志
 
+- 添加[ghostnet](./workspace/models/ghostnet/README.md)
 - 添加[arcface](./workspace/models/arcface/README.md)，mxnet2onnx 可用，dynamic batch 未支持，坑比较多[issue](https://github.com/SthPhoenix/InsightFace-REST/issues/9)
 - 添加[retinaface](./workspace/models/retinaface/README.md)，使用[pytorch版](https://github.com/biubug6/Pytorch_Retinaface)，[mxnet版](https://github.com/deepinsight/insightface)，
 - 添加[centerface](./workspace/models/centerface/README.md)
