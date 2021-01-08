@@ -73,6 +73,12 @@
     <ClCompile Include="src\core\aligner.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\ghostnet.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\trtmodel.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\cc_util.hpp">
@@ -145,6 +151,12 @@
       <Filter>src\core</Filter>
     </ClInclude>
     <ClInclude Include="src\core\aligner.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ghostnet.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\trtmodel.h">
       <Filter>src\core</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,35 +9,65 @@
 #include "core/retinaface.h"
 #include "core/arcface.h"
 #include "core/aligner.h"
+#include "core/ghostnet.h"
 
 int main() {
 
-	cv::Mat image = cv::imread("imgs/00001.jpg");
+#if 0
+	cv::Mat image = cv::imread("imgs/train.jpg");
 
-	std::vector<ccutil::FaceBox> Faceloc;
-	RetinaFace retinaface("configs/retinaface.yaml");
-	ArcFace arcface("configs/arcface.yaml");
-	Aligner aligner;
-	Faceloc = retinaface.EngineInference(image);
-	for (int i = 0; i < Faceloc.size(); ++i) {
-		auto& obj = Faceloc[i];
-		vector<cv::Point2f> keypoints;
-		for (int i = 0; i < 5; i++)
-		{
-			keypoints.emplace_back(obj.landmark[i]);
-		}
-		cv::Mat img_face = image(obj.box()).clone();
-		imwrite(ccutil::format("results/%d.img_face.jpg", i), img_face);
-		cv::Mat face_aligned;
-		aligner.AlignFace(image, keypoints, &face_aligned);
-		imwrite(ccutil::format("results/%d.face_aligned.jpg", i), face_aligned);
-		auto Facefeature = arcface.EngineInference(face_aligned);
+	GhostNet ghostnet("configs/ghostnet.yaml");
+	ccutil::Timer time_total;
+	auto result = ghostnet.EngineInference(image);
+	auto image_labels_ = ccutil::readImageNetLabel("./configs/label.txt");
+	auto result_name = image_labels_[result];
+	INFO("results = %s", result_name.c_str());
+	cv::putText(image, result_name, cv::Point(20, 100), 0, 2, cv::Scalar(0,0,255), 3, 16);
+	imwrite(ccutil::format("results/prediction.jpg"), image);
 
+#else
+		//std::vector<cv::Mat> images{ cv::imread("imgs/17790319373_bd19b24cfc_k.jpg"), cv::imread("imgs/www.jpg"),cv::imread("imgs/selfie.jpg"),cv::imread("imgs/000023.jpg") };
+	std::vector<cv::Mat> images{ cv::imread("imgs/train.jpg"),cv::imread("imgs/dog.jpg") ,cv::imread("imgs/cat.jpg") };
+	GhostNet ghostnet("configs/ghostnet.yaml");
+	ccutil::Timer time_total;
+	auto results = ghostnet.EngineInferenceOptim(images);
+	auto image_labels_ = ccutil::readImageNetLabel("./configs/label.txt");
+	
+	INFO("total time cost = %f", time_total.end());
+	for (int j = 0; j < images.size(); ++j) {
+		auto result_name = image_labels_[results[j]];
+		INFO("results = %s", result_name.c_str());
+		cv::putText(images[j], result_name, cv::Point(20, 100), 0, 2, cv::Scalar(0, 0, 255), 3, 16);
+		imwrite(ccutil::format("results/%d.prediction.jpg", j), images[j]);
 	}
 
 
+#endif
 
-//#if 0
+	//cv::Mat image = cv::imread("imgs/00001.jpg");
+	//std::vector<ccutil::FaceBox> Faceloc;
+	//RetinaFace retinaface("configs/retinaface.yaml");
+	//ArcFace arcface("configs/arcface.yaml");
+	//Aligner aligner;
+	//Faceloc = retinaface.EngineInference(image);
+	//for (int i = 0; i < Faceloc.size(); ++i) {
+	//	auto& obj = Faceloc[i];
+	//	vector<cv::Point2f> keypoints;
+	//	for (int i = 0; i < 5; i++)
+	//	{
+	//		keypoints.emplace_back(obj.landmark[i]);
+	//	}
+	//	cv::Mat img_face = image(obj.box()).clone();
+	//	imwrite(ccutil::format("results/%d.img_face.jpg", i), img_face);
+	//	cv::Mat face_aligned;
+	//	aligner.AlignFace(image, keypoints, &face_aligned);
+	//	imwrite(ccutil::format("results/%d.face_aligned.jpg", i), face_aligned);
+	//	auto Facefeature = arcface.EngineInference(face_aligned);
+	//}
+
+
+
+//#if 1
 //	cv::Mat image = cv::imread("imgs/00001.jpg");
 //	std::vector<ccutil::FaceBox> result;
 //

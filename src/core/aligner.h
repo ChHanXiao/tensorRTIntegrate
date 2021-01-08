@@ -3,7 +3,7 @@
 #ifndef ALIGNER_H
 #define ALIGNER_H
 
-#include "detection.h"
+#include "trtmodel.h"
 
 class Aligner {
 public:

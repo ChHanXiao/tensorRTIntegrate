@@ -3,19 +3,19 @@
 #ifndef ARCFACE_H
 #define ARCFACE_H
 
-#include "detection.h"
+#include "trtmodel.h"
 #include "yaml-cpp/yaml.h"
 
-using namespace ObjectDetection;
-
-class ArcFace : public Detection {
+class ArcFace : public TrtModel {
 public:
 	ArcFace(const string &config_file);
 	~ArcFace();
-
+	void preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
 	vector<float> EngineInference(const Mat &image);
-private:
-
+public:
+	vector<float> mean_;
+	vector<float> std_;
+	float scale_;
 };
 
-#endif
+#endif // !ARCFACE_H

@@ -1,38 +1,23 @@
 #pragma once
 
-#ifndef DETECTION_HPP
-#define DETECTION_HPP
+#ifndef DETECTION_H
+#define DETECTION_H
 
-#include <opencv2/opencv.hpp>
-#include <cc_util.hpp>
-#include "builder/trt_builder.hpp"
-#include "infer/trt_infer.hpp"
-#include "common/json.hpp"
-
-using namespace std;
-using namespace cv;
+#include "trtmodel.h"
 
 namespace ObjectDetection {
 
-	class Detection {
+	class Detection : public TrtModel {
 
 	public:
 		Detection();
 		~Detection();
-		void LoadEngine();
 		void preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
 		void outPutBox(vector<ccutil::BBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize = 15 * 15);
 		void outPutBox(vector<ccutil::FaceBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize = 1);
 
 	public:
-		string model_name_;
-		string onnx_file_;
-		string engine_file_;
 		string labels_file_;
-		shared_ptr<TRTInfer::Engine> engine_;
-		vector<string> head_out_;
-		int maxBatchSize_;
-		vector<vector<int>> input_Dim_;
 
 		float obj_threshold_;
 		float nms_threshold_;
@@ -44,4 +29,4 @@ namespace ObjectDetection {
 	};
 }
 
-#endif
+#endif // !DETECTION_H

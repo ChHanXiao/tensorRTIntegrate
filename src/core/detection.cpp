@@ -6,25 +6,6 @@ namespace ObjectDetection {
 	Detection::Detection() {}
 	Detection::~Detection() {}
 
-	void Detection::LoadEngine() {
-
-		INFO("LoadEngine...");
-		if (!ccutil::exists(engine_file_)) {
-			INFO("onnx to trtmodel...");
-			if (!ccutil::exists(onnx_file_)) {
-				INFOW("onnx file:%s not found !", onnx_file_.c_str());
-				return;
-			}
-			TRTBuilder::compileTRT(
-				TRTBuilder::TRTMode_FP32, head_out_, maxBatchSize_,
-				TRTBuilder::ModelSource(onnx_file_), engine_file_,
-				input_Dim_
-			);
-		}
-		INFO("load model: %s", engine_file_.c_str());
-		engine_ = TRTInfer::loadEngine(engine_file_);
-	}
-
 	void Detection::preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
 
 		int outH = tensor->height();

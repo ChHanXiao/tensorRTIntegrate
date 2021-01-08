@@ -20,6 +20,27 @@ ArcFace::ArcFace(const string &config_file) {
 
 ArcFace::~ArcFace() {}
 
+void ArcFace::preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
+
+	int outH = tensor->height();
+	int outW = tensor->width();
+	float sw = outW / (float)image.cols;
+	float sh = outH / (float)image.rows;
+	float scale_size = std::min(sw, sh);
+	cv::Mat flt_img = cv::Mat::zeros(cv::Size(outW, outH), CV_8UC3);
+	cv::Mat outimage;
+	cv::resize(image, outimage, cv::Size(), scale_size, scale_size);
+	outimage.copyTo(flt_img(cv::Rect(0, 0, outimage.cols, outimage.rows)));
+	float mean[3], std[3];
+	for (int i = 0; i < 3; i++)
+	{
+		mean[i] = mean_[i];
+		std[i] = std_[i];
+	}
+
+	tensor->setNormMatGPU(numIndex, flt_img, mean, std, scale_);
+}
+
 vector<float> ArcFace::EngineInference(const Mat &image) {
 
 	if (engine_ == nullptr) {

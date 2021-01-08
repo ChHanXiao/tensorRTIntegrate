@@ -606,9 +606,18 @@ namespace TRTInfer {
 			//auto dtType = context->engine_->getBindingDataType(i);
 			Assert(dims.nbDims <= 4);
 
-			int offset = dims.nbDims == 4 ? 0 : 1;
-			int newDims[] = { 1, 1, 1, 1 };
+			//int offset = dims.nbDims == 4 ? 0 : 1;
+			int offset;
+			if (dims.nbDims == 4)
+			{
+				offset = 0;
+			}else if (dims.nbDims == 3) { 
+				offset = 1;
+			}else if (dims.nbDims == 2) {
+				offset = 0;
+			}else{}
 
+			int newDims[] = { 1, 1, 1, 1 };
 			memcpy(newDims + offset, dims.d, sizeof(int) * dims.nbDims);
 			auto mapperTensor = new Tensor(4, newDims, TRTInfer::DataType::dtFloat);
 			auto newTensor = shared_ptr<Tensor>(mapperTensor);
