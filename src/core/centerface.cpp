@@ -27,8 +27,8 @@ CenterFace::CenterFace(const string &config_file) {
 
 CenterFace::~CenterFace() {};
 
-void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& heatmap, const shared_ptr<TRTInfer::Tensor>& wh, 
-	const shared_ptr<TRTInfer::Tensor>& offset, const shared_ptr<TRTInfer::Tensor>& landmark,
+void postProcessCPU(const shared_ptr<TRTInfer::Tensor> &heatmap, const shared_ptr<TRTInfer::Tensor> &wh, 
+	const shared_ptr<TRTInfer::Tensor> &offset, const shared_ptr<TRTInfer::Tensor> &landmark,
 	int stride, float threshold, vector<ccutil::FaceBox> &bboxs) {
 
 	for (int class_ = 0; class_ < heatmap->channel(); ++class_) {
@@ -63,7 +63,7 @@ void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& heatmap, const shared_pt
 	}
 }
 
-vector<ccutil::FaceBox> CenterFace::EngineInference(const Mat& image) {
+vector<ccutil::FaceBox> CenterFace::EngineInference(const Mat &image) {
 
 	if (engine_ == nullptr) {
 		INFO("EngineInference failure, model is nullptr");
@@ -95,7 +95,7 @@ vector<ccutil::FaceBox> CenterFace::EngineInference(const Mat& image) {
 	return facebboxs;
 }
 
-vector<vector<ccutil::FaceBox>> CenterFace::EngineInferenceOptim(const vector<Mat>& images) {
+vector<vector<ccutil::FaceBox>> CenterFace::EngineInferenceOptim(const vector<Mat> &images) {
 
 	if (engine_ == nullptr) {
 		INFO("detectBoundingbox failure call, model is nullptr");

@@ -67,6 +67,12 @@
     <ClCompile Include="src\core\retinaface.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\arcface.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\aligner.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\cc_util.hpp">
@@ -134,6 +140,12 @@
     </ClInclude>
     <ClInclude Include="src\infer\retinaface_backend.hpp">
       <Filter>src\infer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\arcface.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\aligner.h">
+      <Filter>src\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

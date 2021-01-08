@@ -16,6 +16,8 @@
     <ClCompile Include="src\common\cc_util.cpp" />
     <ClCompile Include="src\common\json.cpp" />
     <ClCompile Include="src\common\trt_common.cpp" />
+    <ClCompile Include="src\core\aligner.cpp" />
+    <ClCompile Include="src\core\arcface.cpp" />
     <ClCompile Include="src\core\centerface.cpp" />
     <ClCompile Include="src\core\detection.cpp" />
     <ClCompile Include="src\core\nanodet.cpp" />
@@ -36,6 +38,8 @@
     <ClInclude Include="src\common\cc_util.hpp" />
     <ClInclude Include="src\common\json.hpp" />
     <ClInclude Include="src\common\trt_common.hpp" />
+    <ClInclude Include="src\core\aligner.h" />
+    <ClInclude Include="src\core\arcface.h" />
     <ClInclude Include="src\core\centerface.h" />
     <ClInclude Include="src\core\detection.h" />
     <ClInclude Include="src\core\nanodet.h" />
