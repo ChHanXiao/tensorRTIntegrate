@@ -1,0 +1,16 @@
+yolov5s:
+    onnx_file:      "./models/detect/yolo/yolov3-spp.onnx"
+    engine_file:    "./models/detect/yolo/yolov3-spp.trtmodel"
+    labels_file:    "./configs/detect/coco.names"
+    maxBatchSize:   5
+    input_Dim:      [[1,3,640,640],[1,3,640,640],[5,3,640,640]]
+    strides:        [8, 16, 32]
+    num_anchors:    [3,  3,  3]
+    anchors:        [[[10.,13.], [16.,30.], [33.,23.]], [[30.,61.], [62.,45.], [59.,119.]], [[116.,90.], [156.,198.], [373.,326.]]]
+    obj_threshold:  0.4
+    nms_threshold:  0.6
+    max_objs:       100
+    num_classes:    80
+    mean:           [0.,0.,0.]
+    std:            [1.,1.,1.]
+    scale:          0.0039216

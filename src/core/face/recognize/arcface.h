@@ -1,0 +1,23 @@
+#pragma once
+
+#ifndef ARCFACE_H
+#define ARCFACE_H
+
+#include "core/base/trtmodel.h"
+
+class ArcFace : public TrtModel {
+
+public:
+
+	ArcFace();
+	ArcFace(const string &config_file);
+	~ArcFace();
+	void preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
+	int EngineInference(const Mat &image, vector<float>* result);
+public:
+	vector<float> mean_;
+	vector<float> std_;
+	float scale_;
+};
+
+#endif // !ARCFACE_H

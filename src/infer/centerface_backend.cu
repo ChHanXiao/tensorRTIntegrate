@@ -65,7 +65,7 @@ namespace TRTInfer {
 
 	void CenterFaceBackend::postProcessGPU(shared_ptr<Tensor> heatmap, shared_ptr<Tensor> wh,
 		shared_ptr<Tensor> offset, shared_ptr<Tensor> landmark,
-		int stride, float threshold, vector<vector<ccutil::FaceBox>> &bboxs) {
+		int stride, float threshold, vector<vector<ccutil::FaceBox>>& bboxs) {
 
 		int batchSize = heatmap->num();
 		int width = heatmap->width();

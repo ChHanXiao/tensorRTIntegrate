@@ -1,14 +1,15 @@
 日志
 
-- 添加[ghostnet](./workspace/models/ghostnet/README.md)
-- 添加[arcface](./workspace/models/arcface/README.md)，mxnet2onnx 可用，dynamic batch 未支持，坑比较多[issue](https://github.com/SthPhoenix/InsightFace-REST/issues/9)
-- 添加[retinaface](./workspace/models/retinaface/README.md)，使用[pytorch版](https://github.com/biubug6/Pytorch_Retinaface)，[mxnet版](https://github.com/deepinsight/insightface)，
-- 添加[centerface](./workspace/models/centerface/README.md)
-- 添加[nanodet](./workspace/models/nanodet/README.md)，dynamic batch 未支持和shufflenet中Reshape层有点问题
+- 添加[alignment、gender-age](./workspace/models/face/gender-age/README.md)，整合人脸代码，检测-对齐-关键点-性别|年龄-提取特征
+- 添加[ghostnet](./workspace/models/classifier/ghostnet/README.md)
+- 添加[arcface](./workspace/models/face/arcface/README.md)，mxnet2onnx 可用，dynamic batch 未支持，坑比较多[issue](https://github.com/SthPhoenix/InsightFace-REST/issues/9)
+- 添加[retinaface](./workspace/models/face/retinaface/README.md)，使用[pytorch版](https://github.com/biubug6/Pytorch_Retinaface)，[mxnet版](https://github.com/deepinsight/insightface)，
+- 添加[centerface](./workspace/models/face/centerface/README.md)
+- 添加[nanodet](./workspace/models/detect/nanodet/README.md)，dynamic batch 未支持和shufflenet中Reshape层有点问题
 - 更新库[lean](./lean/README.md)及模型（cuda11.0、cudnn8.0.5、tensorRT7.2.2.3，[转onnx流程](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/workspace/models/readme.md) 可用opset_version=12）
 - YOLOv3-SPP、YOLOv4检测流程同YOLOv5，仅修改config即可
 - 添加yaml读取配置文件
-- 添加[YOLOv5](./workspace/models/yolov5/README.md)，直接使用版focus未优化
+- 添加[YOLOv5](./workspace/models/detect/yolov5/README.md)，直接使用版focus未优化
 - onnx的plugin暂时移除，cmake编译未修改
 
 =======================================================================

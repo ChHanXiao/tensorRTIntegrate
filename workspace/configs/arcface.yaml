@@ -1,8 +1,0 @@
-arcface:
-    onnx_file:      "./models/arcface/modelnew2_onnx.onnx"
-    engine_file:    "./models/arcface/modelnew2_onnx.trtmodel"
-    maxBatchSize:   5
-    input_Dim:      [[1,3,112,112],[1,3,112,112],[1,3,112,112]]
-    mean:           [0.,0.,0.]
-    std:            [1.,1.,1.]
-    scale:          1.

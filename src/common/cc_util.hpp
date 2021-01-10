@@ -77,6 +77,12 @@ namespace ccutil{
 		FaceBox(const ccutil::BBox& other) :ccutil::BBox(other) {}
 	};
 
+	struct FaceAttribute {
+		int gender;
+		int age;
+	};
+
+
 	string tostr(int val);
 	string tostr(unsigned int val);
 	string tostr(long val);

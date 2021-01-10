@@ -14,9 +14,6 @@
     <Filter Include="src\infer">
       <UniqueIdentifier>{ccaa2911-0572-4115-9b6b-78e2ff4844f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\examples">
-      <UniqueIdentifier>{a8e99737-8d11-40c0-8e71-15bbea97af59}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\core">
       <UniqueIdentifier>{0b3a1df6-c08d-4090-9187-fe0510ff0ce2}</UniqueIdentifier>
     </Filter>
@@ -25,6 +22,30 @@
     </Filter>
     <Filter Include="src\caffeplugin\plugins">
       <UniqueIdentifier>{4677896f-6a13-4756-897f-e9b5408d992f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\face">
+      <UniqueIdentifier>{a725af7b-8305-4a37-9438-62ba1d60bfa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\face\attribute">
+      <UniqueIdentifier>{262532a5-48dc-4546-802f-02440ce3a891}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\face\landmark">
+      <UniqueIdentifier>{eb8c7e4f-e9cb-4c65-9db1-237698831ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\face\recognize">
+      <UniqueIdentifier>{b2dddbc2-c4a8-436b-ab3a-5b04c8b40152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\object">
+      <UniqueIdentifier>{9fe4ccc3-595a-486c-aef9-862993d3277a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\classifier">
+      <UniqueIdentifier>{b150f087-879a-4288-8269-83e4484002bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\face\detect">
+      <UniqueIdentifier>{55a96249-0a67-4bfe-8ae3-a61a45fd0722}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\base">
+      <UniqueIdentifier>{6976e0a4-cfe0-4d8e-a885-cd93009e21af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,35 +70,44 @@
     <ClCompile Include="src\common\trt_common.cpp">
       <Filter>src\common</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\yolov5.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
     <ClCompile Include="src\caffeplugin\caffeplugin.cpp">
       <Filter>src\caffeplugin</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\detection.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\core\classifier\ghostnet.cpp">
+      <Filter>src\core\classifier</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\nanodet.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\core\object\nanodet.cpp">
+      <Filter>src\core\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\centerface.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\core\object\yolov5.cpp">
+      <Filter>src\core\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\retinaface.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\core\face\detect\centerface.cpp">
+      <Filter>src\core\face\detect</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\arcface.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\core\face\detect\retinaface.cpp">
+      <Filter>src\core\face\detect</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\aligner.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\core\face\landmark\face_alignment.cpp">
+      <Filter>src\core\face\landmark</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\ghostnet.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\core\face\attribute\gender_age.cpp">
+      <Filter>src\core\face\attribute</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\trtmodel.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\core\face\recognize\aligner.cpp">
+      <Filter>src\core\face\recognize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\face\recognize\arcface.cpp">
+      <Filter>src\core\face\recognize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\base\detection.cpp">
+      <Filter>src\core\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\base\trtmodel.cpp">
+      <Filter>src\core\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\face\face_engine.cpp">
+      <Filter>src\core\face</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,9 +132,6 @@
     <ClInclude Include="src\infer\trt_backend.hpp">
       <Filter>src\infer</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\yolov5.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
     <ClInclude Include="src\caffeplugin\caffeplugin.hpp">
       <Filter>src\caffeplugin</Filter>
     </ClInclude>
@@ -126,38 +153,50 @@
     <ClInclude Include="src\infer\yolov5_detect_backend.hpp">
       <Filter>src\infer</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\detection.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\nanodet.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
     <ClInclude Include="src\infer\nanodet_backend.hpp">
       <Filter>src\infer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\centerface.h">
-      <Filter>src\core</Filter>
     </ClInclude>
     <ClInclude Include="src\infer\centerface_backend.hpp">
       <Filter>src\infer</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\retinaface.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
     <ClInclude Include="src\infer\retinaface_backend.hpp">
       <Filter>src\infer</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\arcface.h">
-      <Filter>src\core</Filter>
+    <ClInclude Include="src\core\classifier\ghostnet.h">
+      <Filter>src\core\classifier</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\aligner.h">
-      <Filter>src\core</Filter>
+    <ClInclude Include="src\core\object\nanodet.h">
+      <Filter>src\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\ghostnet.h">
-      <Filter>src\core</Filter>
+    <ClInclude Include="src\core\object\yolov5.h">
+      <Filter>src\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\trtmodel.h">
-      <Filter>src\core</Filter>
+    <ClInclude Include="src\core\face\detect\centerface.h">
+      <Filter>src\core\face\detect</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\detect\retinaface.h">
+      <Filter>src\core\face\detect</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\landmark\face_alignment.h">
+      <Filter>src\core\face\landmark</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\attribute\gender_age.h">
+      <Filter>src\core\face\attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\recognize\aligner.h">
+      <Filter>src\core\face\recognize</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\recognize\arcface.h">
+      <Filter>src\core\face\recognize</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\base\detection.h">
+      <Filter>src\core\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\base\trtmodel.h">
+      <Filter>src\core\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\face_engine.h">
+      <Filter>src\core\face</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
