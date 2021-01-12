@@ -47,6 +47,12 @@
     <Filter Include="src\core\base">
       <UniqueIdentifier>{6976e0a4-cfe0-4d8e-a885-cd93009e21af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\core\face\database">
+      <UniqueIdentifier>{55e6d666-8587-41eb-8121-455cd8a4dacf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\face\database\stream">
+      <UniqueIdentifier>{4f4b72ca-ac2e-461f-a87d-d3630477a42f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\import_lib.cpp">
@@ -108,6 +114,12 @@
     </ClCompile>
     <ClCompile Include="src\core\face\face_engine.cpp">
       <Filter>src\core\face</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\face\database\stream\file_stream.cpp">
+      <Filter>src\core\face\database\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\face\database\face_database.cpp">
+      <Filter>src\core\face\database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +209,12 @@
     </ClInclude>
     <ClInclude Include="src\core\face\face_engine.h">
       <Filter>src\core\face</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\database\stream\file_stream.h">
+      <Filter>src\core\face\database\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\database\face_database.h">
+      <Filter>src\core\face\database</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

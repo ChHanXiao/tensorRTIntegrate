@@ -1,5 +1,6 @@
 日志
 
+- 添加人脸识别相似度计算，来源[mnn_example](https://github.com/MirrorYuChen/mnn_example)
 - 添加[alignment、gender-age](./workspace/models/face/gender-age/README.md)，整合人脸代码，检测-对齐-关键点-性别|年龄-提取特征
 - 添加[ghostnet](./workspace/models/classifier/ghostnet/README.md)
 - 添加[arcface](./workspace/models/face/arcface/README.md)，mxnet2onnx 可用，dynamic batch 未支持，坑比较多[issue](https://github.com/SthPhoenix/InsightFace-REST/issues/9)

@@ -14,6 +14,7 @@
 #include <mutex>
 #include <opencv2/opencv.hpp>
 
+
 #define CCUtilVersion  "1.0.3"
 
 namespace ccutil{
@@ -41,6 +42,13 @@ namespace ccutil{
 	using std::vector;
 	using std::map;
 
+	//classifier
+	struct ImageInfo {
+		std::string label_;
+		float score_;
+	};
+
+	//detector
 	struct BBox{
 
 		float score = 0; float x = 0; float y = 0; float r = 0; float b = 0;
@@ -65,22 +73,26 @@ namespace ccutil{
 		BBox offset(const cv::Point& position) const;
 		BBox transfrom(cv::Size sourceSize, cv::Size dstSize);
 	};
-
 	struct LabBBox : BBox {
 		string filename; string classname;
 	};
 
+	//face
 	struct FaceBox : BBox {
 		cv::Point2f landmark[5];
 
 		FaceBox() {}
 		FaceBox(const ccutil::BBox& other) :ccutil::BBox(other) {}
 	};
-
 	struct FaceAttribute {
 		int gender;
 		int age;
 	};
+	struct QueryResult {
+		std::string name_;
+		float sim_;
+	};
+
 
 
 	string tostr(int val);
@@ -296,11 +308,14 @@ namespace ccutil{
 	//read file return all data
 	string loadfile(const string& file);
 	size_t fileSize(const string& file);
+
+
 	bool savefile(const string& file, const string& data, bool mk_dirs = true);
 	bool savefile(const string& file, const void* data, size_t length, bool mk_dirs = true);
 
 	//file exists
 	bool exists(const string& path);
+
 
 	//filename
 	//  c:/a/abc.xml

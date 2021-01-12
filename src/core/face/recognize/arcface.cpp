@@ -48,7 +48,7 @@ int ArcFace::EngineInference(const Mat &image, vector<float>* result) {
 		INFO("EngineInference failure, model is nullptr");
 		return -1;
 	}
-
+	vector<float>& facefeature = *result;
 	ccutil::Timer time_preprocess;
 	engine_->input()->resize(1);
 	Size netInputSize = engine_->input()->size();
@@ -61,8 +61,8 @@ int ArcFace::EngineInference(const Mat &image, vector<float>* result) {
 	ccutil::Timer time_decode;
 	auto out = engine_->tensor("fc1");
 	float* out_ptr = out->cpu<float>(0, 0);
-	vector<float> facefeature(out_ptr, out_ptr+ out->channel());
-	result = &facefeature;
+	vector<float> facefeaturetmp(out_ptr, out_ptr+ out->channel());
+	facefeature = facefeaturetmp;
 	INFO("decode time cost = %f", time_decode.end());
 
 	return 0;

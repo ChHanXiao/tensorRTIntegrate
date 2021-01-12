@@ -670,6 +670,7 @@ namespace ccutil{
 #endif
 	}
 
+
 	bool savefile(const string& file, const string& data, bool mk_dirs){
 		return savefile(file, data.data(), data.size(), mk_dirs);
 	}

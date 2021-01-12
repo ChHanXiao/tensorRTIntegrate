@@ -1,20 +1,19 @@
 ﻿#include <fstream>
+#include <filesystem>
 #include "common/cc_util.hpp"
 #include "infer/trt_infer.hpp"
-#include "common/json.hpp"
 
 #include "core/face/face_engine.h"
 
+using namespace std;
 
-int main() {
-	cv::Mat image = cv::imread("imgs/test1.jpg");
+int TestAttribute() {
 	mirror::FaceEngine face("configs/face.yaml");
+	cv::Mat image = cv::imread("imgs/00001.jpg");
 	std::vector<ccutil::FaceBox> faceloc;
 	face.DetectFace(image, &faceloc);
-
 	for (int i = 0; i < faceloc.size(); ++i) {
 		auto& obj = faceloc[i];
-
 		vector<cv::Point2f> keypoints;
 		for (int i = 0; i < 5; i++)
 		{
@@ -32,6 +31,7 @@ int main() {
 		}
 		vector<float> facefeature;
 		face.ExtractFeature(face_aligned, &facefeature);
+
 		ccutil::FaceAttribute attributes;
 		face.AttrGenderAge(face_aligned, &attributes);
 		string attrGenderAge = ccutil::format("%d/%d", attributes.gender, attributes.age);
@@ -41,39 +41,75 @@ int main() {
 		for (auto k : obj.landmark) {
 			cv::circle(image, k, 3, cv::Scalar(0, 0, 255), -1, 16);
 		}
-
 	}
 	imwrite(ccutil::format("results/face_det.jpg"), image);
+	return 0;
+}
 
+int TestRecognizer() {
+	mirror::FaceEngine face("configs/face.yaml");
+	std::string src_path = "./imgs/recognizer/samples/";
+	std::vector<cv::String> file_vec;
+	cv::glob(src_path + "*.jpg", file_vec);
+	face.Clear();
+	face.Load();
+	for (auto imgpath : file_vec) {
+		cv::Mat image = cv::imread(imgpath);
+		vector<float> facefeature;
+		face.ExtractFeature(image, &facefeature);
+		int pos = imgpath.find_last_of('\\','/');
+		string nameid(imgpath.substr(pos + 1));
+		face.Insert(facefeature, nameid);
+	}
+	face.Save();
+	string imgpath = "imgs/recognizer/test1.jpg";
+	cv::Mat imageid = cv::imread(imgpath);
+	int pos = imgpath.find_last_of('/');
+	string imgid(imgpath.substr(pos + 1));
+	vector<float> facefeature;
+	face.ExtractFeature(imageid, &facefeature);
+	ccutil::QueryResult IDresult;
+	face.QueryTop(facefeature, &IDresult);
+	cout << "img:" << imgid << ",--->" << IDresult.name_<< ",sim:"<< IDresult.sim_ << endl;
 
-//#if 0
-//	cv::Mat image = cv::imread("imgs/train.jpg");
-//
-//	GhostNet ghostnet("configs/ghostnet.yaml");
-//	ccutil::Timer time_total;
-//	auto result = ghostnet.EngineInference(image);
-//	auto image_labels_ = ccutil::readImageNetLabel("./configs/label.txt");
-//	auto result_name = image_labels_[result];
-//	INFO("results = %s", result_name.c_str());
-//	cv::putText(image, result_name, cv::Point(20, 100), 0, 2, cv::Scalar(0,0,255), 3, 16);
-//	imwrite(ccutil::format("results/prediction.jpg"), image);
-//
-//#else
-//		//std::vector<cv::Mat> images{ cv::imread("imgs/17790319373_bd19b24cfc_k.jpg"), cv::imread("imgs/www.jpg"),cv::imread("imgs/selfie.jpg"),cv::imread("imgs/000023.jpg") };
-//	std::vector<cv::Mat> images{ cv::imread("imgs/train.jpg"),cv::imread("imgs/dog.jpg") ,cv::imread("imgs/cat.jpg") };
-//	GhostNet ghostnet("configs/ghostnet.yaml");
-//	ccutil::Timer time_total;
-//	auto results = ghostnet.EngineInferenceOptim(images);
-//	auto image_labels_ = ccutil::readImageNetLabel("./configs/label.txt");
-//	
-//	INFO("total time cost = %f", time_total.end());
-//	for (int j = 0; j < images.size(); ++j) {
-//		auto result_name = image_labels_[results[j]];
-//		INFO("results = %s", result_name.c_str());
-//		cv::putText(images[j], result_name, cv::Point(20, 100), 0, 2, cv::Scalar(0, 0, 255), 3, 16);
-//		imwrite(ccutil::format("results/%d.prediction.jpg", j), images[j]);
-//	}
-//#endif
+	return 0;
+}
+
+int TestObject() {
+
+	//#if 0
+	//	cv::Mat image = cv::imread("imgs/train.jpg");
+	//
+	//	GhostNet ghostnet("configs/ghostnet.yaml");
+	//	ccutil::Timer time_total;
+	//	auto result = ghostnet.EngineInference(image);
+	//	auto image_labels_ = ccutil::readImageNetLabel("./configs/label.txt");
+	//	auto result_name = image_labels_[result];
+	//	INFO("results = %s", result_name.c_str());
+	//	cv::putText(image, result_name, cv::Point(20, 100), 0, 2, cv::Scalar(0,0,255), 3, 16);
+	//	imwrite(ccutil::format("results/prediction.jpg"), image);
+	//
+	//#else
+	//		//std::vector<cv::Mat> images{ cv::imread("imgs/17790319373_bd19b24cfc_k.jpg"), cv::imread("imgs/www.jpg"),cv::imread("imgs/selfie.jpg"),cv::imread("imgs/000023.jpg") };
+	//	std::vector<cv::Mat> images{ cv::imread("imgs/train.jpg"),cv::imread("imgs/dog.jpg") ,cv::imread("imgs/cat.jpg") };
+	//	GhostNet ghostnet("configs/ghostnet.yaml");
+	//	ccutil::Timer time_total;
+	//	auto results = ghostnet.EngineInferenceOptim(images);
+	//	auto image_labels_ = ccutil::readImageNetLabel("./configs/label.txt");
+	//	
+	//	INFO("total time cost = %f", time_total.end());
+	//	for (int j = 0; j < images.size(); ++j) {
+	//		auto result_name = image_labels_[results[j]];
+	//		INFO("results = %s", result_name.c_str());
+	//		cv::putText(images[j], result_name, cv::Point(20, 100), 0, 2, cv::Scalar(0, 0, 255), 3, 16);
+	//		imwrite(ccutil::format("results/%d.prediction.jpg", j), images[j]);
+	//	}
+	//#endif
+	return 0;
+}
+
+int main() {
+	TestRecognizer();
 
 
 

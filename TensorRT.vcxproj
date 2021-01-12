@@ -20,6 +20,8 @@
     <ClCompile Include="src\core\base\trtmodel.cpp" />
     <ClCompile Include="src\core\classifier\ghostnet.cpp" />
     <ClCompile Include="src\core\face\attribute\gender_age.cpp" />
+    <ClCompile Include="src\core\face\database\face_database.cpp" />
+    <ClCompile Include="src\core\face\database\stream\file_stream.cpp" />
     <ClCompile Include="src\core\face\detect\centerface.cpp" />
     <ClCompile Include="src\core\face\detect\retinaface.cpp" />
     <ClCompile Include="src\core\face\face_engine.cpp" />
@@ -47,6 +49,8 @@
     <ClInclude Include="src\core\base\trtmodel.h" />
     <ClInclude Include="src\core\classifier\ghostnet.h" />
     <ClInclude Include="src\core\face\attribute\gender_age.h" />
+    <ClInclude Include="src\core\face\database\face_database.h" />
+    <ClInclude Include="src\core\face\database\stream\file_stream.h" />
     <ClInclude Include="src\core\face\detect\centerface.h" />
     <ClInclude Include="src\core\face\detect\retinaface.h" />
     <ClInclude Include="src\core\face\face_engine.h" />

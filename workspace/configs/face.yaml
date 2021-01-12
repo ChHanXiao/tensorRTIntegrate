@@ -2,4 +2,5 @@ face:
     detect:         "./configs/face/retinaface.yaml"
     face_alignment: "./configs/face/face_alignment.yaml"
     gender_age:     "./configs/face/gender_age.yaml"
-    recognizer:     "./configs/face/arcface.yaml"
+    recognize:      "./configs/face/arcface.yaml"
+    db_path:        "./results/"
