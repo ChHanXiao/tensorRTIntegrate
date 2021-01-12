@@ -10,6 +10,7 @@
 namespace mirror {
 
 	class FaceEngine::Impl {
+
 	public:
 		Impl(const std::string &config_file) {
 
@@ -63,7 +64,7 @@ namespace mirror {
 		inline int Load() {
 			return database_->Load(db_name_.c_str());
 		}
-		inline bool Clear() {
+		inline int Clear() {
 			return database_->Clear();
 		}
 	private:
@@ -76,6 +77,7 @@ namespace mirror {
 		ArcFace* recognizer_;
 		FaceDatabase* database_;
 	};
+	
 	FaceEngine::FaceEngine() {}
 
 	FaceEngine::FaceEngine(const std::string &config_file) {
@@ -129,7 +131,7 @@ namespace mirror {
 		return impl_->Load();
 	}
 	
-	bool FaceEngine::Clear() {
+	int FaceEngine::Clear() {
 		return impl_->Clear();
 	}
 

@@ -10,8 +10,8 @@
 namespace mirror {
 
 	class FaceEngine {
-	public:
 
+	public:
 		FaceEngine();
 		FaceEngine(const std::string &config_file);
 		~FaceEngine();
@@ -27,7 +27,7 @@ namespace mirror {
 		int64_t QueryTop(const std::vector<float>& feat, ccutil::QueryResult *query_result = nullptr);
 		int Save();
 		int Load();
-		bool Clear();
+		int Clear();
 
 	private:
 		class Impl;

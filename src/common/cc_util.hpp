@@ -74,7 +74,8 @@ namespace ccutil{
 		BBox transfrom(cv::Size sourceSize, cv::Size dstSize);
 	};
 	struct LabBBox : BBox {
-		string filename; string classname;
+		string filename; 
+		string classname;
 	};
 
 	//face

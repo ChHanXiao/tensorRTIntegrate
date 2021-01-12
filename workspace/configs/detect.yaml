@@ -1,0 +1,3 @@
+detect:
+    nanodet:         "./configs/detect/nanodet.yaml"
+    yolo:         "./configs/detect/yolov5s.yaml"

@@ -4,6 +4,7 @@
 #include "infer/trt_infer.hpp"
 
 #include "core/face/face_engine.h"
+#include "core/object/object_engine.h"
 
 using namespace std;
 
@@ -51,8 +52,8 @@ int TestRecognizer() {
 	std::string src_path = "./imgs/recognizer/samples/";
 	std::vector<cv::String> file_vec;
 	cv::glob(src_path + "*.jpg", file_vec);
-	face.Clear();
 	face.Load();
+	face.Clear();
 	for (auto imgpath : file_vec) {
 		cv::Mat image = cv::imread(imgpath);
 		vector<float> facefeature;
@@ -62,7 +63,7 @@ int TestRecognizer() {
 		face.Insert(facefeature, nameid);
 	}
 	face.Save();
-	string imgpath = "imgs/recognizer/test1.jpg";
+	string imgpath = "imgs/recognizer/test2.jpg";
 	cv::Mat imageid = cv::imread(imgpath);
 	int pos = imgpath.find_last_of('/');
 	string imgid(imgpath.substr(pos + 1));
@@ -76,6 +77,39 @@ int TestRecognizer() {
 }
 
 int TestObject() {
+#if 0
+	cv::Mat image = cv::imread("imgs/www.jpg");	
+	mirror::ObjectEngine object("configs/detect.yaml");
+	std::vector<ccutil::BBox> result;
+	object.DetectObject(image, &result);
+	
+
+	for (int i = 0; i < result.size(); ++i) {
+		auto& obj = result[i];
+		ccutil::drawbbox(image, obj);
+	}
+	imwrite(ccutil::format("results/object.jpg"), image);
+#else
+	std::vector<cv::Mat> images{ cv::imread("imgs/zidane.jpg"), cv::imread("imgs/www.jpg"), cv::imread("imgs/bus.jpg") }; 
+	mirror::ObjectEngine object("configs/detect.yaml");
+	std::vector<std::vector<ccutil::BBox>> results;
+	object.DetectObjectBatch(images, &results);
+
+	for (int j = 0; j < images.size(); ++j) {
+		auto& objs = results[j];
+		INFO("objs.length = %d", objs.size());
+		for (int i = 0; i < objs.size(); ++i) {
+			auto& obj = objs[i];
+			ccutil::drawbbox(images[j], obj);
+		}
+		imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
+	}
+
+#endif
+	return 0;
+}
+
+int TestClassify() {
 
 	//#if 0
 	//	cv::Mat image = cv::imread("imgs/train.jpg");
@@ -109,7 +143,7 @@ int TestObject() {
 }
 
 int main() {
-	TestRecognizer();
+	TestObject();
 
 
 

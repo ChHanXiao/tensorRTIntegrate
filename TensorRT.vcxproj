@@ -28,8 +28,9 @@
     <ClCompile Include="src\core\face\landmark\face_alignment.cpp" />
     <ClCompile Include="src\core\face\recognize\aligner.cpp" />
     <ClCompile Include="src\core\face\recognize\arcface.cpp" />
-    <ClCompile Include="src\core\object\nanodet.cpp" />
-    <ClCompile Include="src\core\object\yolov5.cpp" />
+    <ClCompile Include="src\core\object\nanodet\nanodet.cpp" />
+    <ClCompile Include="src\core\object\object_engine.cpp" />
+    <ClCompile Include="src\core\object\yolo\yolov5.cpp" />
     <ClCompile Include="src\import_lib.cpp" />
     <ClCompile Include="src\infer\trt_infer.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -57,8 +58,9 @@
     <ClInclude Include="src\core\face\landmark\face_alignment.h" />
     <ClInclude Include="src\core\face\recognize\aligner.h" />
     <ClInclude Include="src\core\face\recognize\arcface.h" />
-    <ClInclude Include="src\core\object\nanodet.h" />
-    <ClInclude Include="src\core\object\yolov5.h" />
+    <ClInclude Include="src\core\object\nanodet\nanodet.h" />
+    <ClInclude Include="src\core\object\object_engine.h" />
+    <ClInclude Include="src\core\object\yolo\yolov5.h" />
     <ClInclude Include="src\infer\centerface_backend.hpp" />
     <ClInclude Include="src\infer\nanodet_backend.hpp" />
     <ClInclude Include="src\infer\retinaface_backend.hpp" />

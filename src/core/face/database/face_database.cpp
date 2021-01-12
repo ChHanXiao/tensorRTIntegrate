@@ -81,7 +81,7 @@ public:
 	bool Clear() {
 		db_.clear();
 		max_index_ = 0;
-		return 0;
+		return true;
 	}
 
 	float CalculateSimilarity(const std::vector<float>& feat1,
