@@ -1,6 +1,8 @@
 
 #include "ghostnet.h"
 
+GhostNet::GhostNet() {}
+
 GhostNet::GhostNet(const string &config_file) {
 
 	YAML::Node root = YAML::LoadFile(config_file);
@@ -15,14 +17,15 @@ GhostNet::GhostNet(const string &config_file) {
 	scale_ = config["scale"].as<float>();
 	image_labels_ = ccutil::readImageNetLabel(labels_file_);
 	//assert(num_classes_ == detect_labels_.size());
-
 	head_out_ = { "output" };
+
 	LoadEngine();
+
 }
 
 GhostNet::~GhostNet() {}
 
-void GhostNet::preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
+void GhostNet::PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
 
 	int outH = tensor->height();
 	int outW = tensor->width();
@@ -53,7 +56,7 @@ int GhostNet::EngineInference(const Mat &image, int* result) {
 
 	ccutil::Timer time_preprocess;
 	engine_->input()->resize(1);
-	preprocessImageToTensor(image, 0, engine_->input());
+	PrepareImage(image, 0, engine_->input());
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;
 	engine_->forward();
@@ -83,7 +86,7 @@ int GhostNet::EngineInferenceOptim(const vector<Mat>& images, vector<int>* resul
 	ccutil::Timer time_preprocess;
 	engine_->input()->resize(images.size());
 	for (int i = 0; i < images.size(); i++) {
-		preprocessImageToTensor(images[i], i, engine_->input());
+		PrepareImage(images[i], i, engine_->input());
 	}
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;

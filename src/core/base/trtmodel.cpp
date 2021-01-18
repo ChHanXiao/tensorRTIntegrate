@@ -4,7 +4,8 @@
 TrtModel::TrtModel() {}
 TrtModel::~TrtModel() {}
 
-void TrtModel::LoadEngine() {
+void TrtModel::LoadEngine()
+{
 
 	INFO("LoadEngine...");
 	if (!ccutil::exists(engine_file_)) {

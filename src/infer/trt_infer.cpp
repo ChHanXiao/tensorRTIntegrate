@@ -7,7 +7,8 @@
 #include <NvInfer.h>
 #include <NvCaffeParser.h>
 #include <NvInferPlugin.h>
-#include <NvOnnxParser.h>
+//#include <NvOnnxParser.h>
+//#include <onnx_parser/NvOnnxParser.h>
 #include <cuda_fp16.h>
 #include <caffeplugin/caffeplugin.hpp>
 
@@ -18,7 +19,7 @@ using namespace std;
 do {																	 \
 	auto ret = (op);													 \
 	if (ret != cudaSuccess) {											 \
-		LOG(LFATAL) << #op << " fail, " << (int)ret << " != " << (int)cudaSuccess << ", " << cudaGetErrorString(ret);				 \
+		LOG_L(LFATAL) << #op << " fail, " << (int)ret << " != " << (int)cudaSuccess << ", " << cudaGetErrorString(ret);				 \
 	}																	 \
 } while (0);
 
@@ -265,7 +266,7 @@ namespace TRTInfer {
 			return;
 
 		if (type() != DataType::dtHalfloat) {
-			LOG(LFATAL) << "not implement function";
+			LOG_L(LFATAL) << "not implement function";
 		}
 
 		auto c = count();
@@ -289,7 +290,7 @@ namespace TRTInfer {
 			return;
 
 		if (type() != DataType::dtFloat) {
-			LOG(LFATAL) << "not implement function";
+			LOG_L(LFATAL) << "not implement function";
 		}
 
 		auto c = count();

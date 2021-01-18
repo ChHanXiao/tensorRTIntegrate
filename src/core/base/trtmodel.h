@@ -6,20 +6,19 @@
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h>
 #include <cc_util.hpp>
+//#include <register_factory.hpp>
 #include "builder/trt_builder.hpp"
 #include "infer/trt_infer.hpp"
-//#include "yaml-cpp/yaml.h"
 
 using namespace std;
 using namespace cv;
 
-class TrtModel {
+class TrtModel{
 
 public:
 	TrtModel();
 	~TrtModel();
 	void LoadEngine();
-
 public:
 	string model_name_;
 	string onnx_file_;

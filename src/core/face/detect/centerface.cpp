@@ -26,7 +26,22 @@ CenterFace::CenterFace(const string& config_file) {
 
 CenterFace::~CenterFace() {};
 
-void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& heatmap, const shared_ptr<TRTInfer::Tensor>& wh, 
+static float commonExp(float value) {
+
+	float gate = 1;
+	float base = exp(gate);
+	if (fabs(value) < gate)
+		return value * base;
+
+	if (value > 0) {
+		return exp(value);
+	}
+	else {
+		return -exp(-value);
+	}
+}
+
+void CenterFace::postProcessCPU(const shared_ptr<TRTInfer::Tensor>& heatmap, const shared_ptr<TRTInfer::Tensor>& wh,
 	const shared_ptr<TRTInfer::Tensor>& offset, const shared_ptr<TRTInfer::Tensor>& landmark,
 	int stride, float threshold, vector<ccutil::FaceBox>& bboxs) {
 
@@ -35,8 +50,8 @@ void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& heatmap, const shared_pt
 			float* ohmptr = heatmap->cpu<float>(0, class_, i);
 			for (int j = 0; j < heatmap->width(); ++j) {
 				if (*ohmptr > threshold) {
-					float dh = exp(wh->at<float>(0, 0, i, j)) * stride;
-					float dw = exp(wh->at<float>(0, 1, i, j)) * stride;
+					float dh = commonExp(wh->at<float>(0, 0, i, j)) * stride;
+					float dw = commonExp(wh->at<float>(0, 1, i, j)) * stride;
 					float oy = offset->at<float>(0, 0, i, j);
 					float ox = offset->at<float>(0, 1, i, j);
 
@@ -44,17 +59,14 @@ void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& heatmap, const shared_pt
 					float y = (i + oy + 0.5) * stride - dh * 0.5;
 					float r = x + dw;
 					float b = y + dh;
-					ccutil::BBox box(Rect(Point(x, y), Point(r + 1, b + 1)));
-					box.label = class_;
-					box.score = *ohmptr;
-					ccutil::FaceBox facebox(box);
+					ccutil::FaceBox box(ccutil::BBox(x, y, r, b, *ohmptr, class_));
 					if (box.area() > 0)
 						for (int k = 0; k < 5; ++k) {
 							float landmark_x = box.x + landmark->at<float>(0, k * 2 + 1, i, j) * box.width();
 							float landmark_y = box.y + landmark->at<float>(0, k * 2, i, j) * box.height();
-							facebox.landmark[k] = Point2f(landmark_x, landmark_y);
+							box.landmark[k] = Point2f(landmark_x, landmark_y);
 						}
-						bboxs.push_back(facebox);
+						bboxs.push_back(box);
 				}
 				++ohmptr;
 			}
@@ -74,7 +86,7 @@ int CenterFace::EngineInference(const Mat& image, vector<ccutil::FaceBox>* resul
 	engine_->input()->resize(1);
 	Size netInputSize = engine_->input()->size();
 	Size imageSize = image.size();
-	preprocessImageToTensor(image, 0, engine_->input());
+	PrepareImage(image, 0, engine_->input());
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;
 	engine_->forward();
@@ -90,7 +102,7 @@ int CenterFace::EngineInference(const Mat& image, vector<ccutil::FaceBox>* resul
 	ccutil::Timer time_nms;
 	auto& objs = facebboxs;
 	objs = ccutil::nms(objs, nms_threshold_);
-	outPutBox(objs, imageSize, netInputSize);
+	PostProcess(objs, imageSize, netInputSize);
 	INFO("nms time cost = %f", time_nms.end());
 
 	return 0;
@@ -109,7 +121,7 @@ int CenterFace::EngineInferenceOptim(const vector<Mat>& images, vector<vector<cc
 	Size netInputSize = engine_->input()->size();
 	vector<Size> imagesSize;
 	for (int i = 0; i < images.size(); ++i) {
-		preprocessImageToTensor(images[i], i, engine_->input());
+		PrepareImage(images[i], i, engine_->input());
 		imagesSize.emplace_back(images[i].size());
 	}
 	ccutil::Timer time_forward;
@@ -129,7 +141,7 @@ int CenterFace::EngineInferenceOptim(const vector<Mat>& images, vector<vector<cc
 	for (int i = 0; i < facebboxs.size(); ++i) {
 		auto& objs = facebboxs[i];
 		objs = ccutil::nms(objs, nms_threshold_);
-		outPutBox(objs, imagesSize[i], netInputSize);
+		PostProcess(objs, imagesSize[i], netInputSize);
 	}
 	INFO("nms time cost = %f", time_nms.end());
 

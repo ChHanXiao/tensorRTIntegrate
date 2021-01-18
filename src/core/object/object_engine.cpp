@@ -8,30 +8,31 @@ namespace mirror {
 
 	public:
 		Impl(const std::string &config_file) {
-			INFO("ObjectEngine Init Start!");
 			YAML::Node root = YAML::LoadFile(config_file);
 			YAML::Node config = root["detect"];
-			std::string nanodet_cfg = config["nanodet"].as<std::string>();
-			std::string yolo_cfg = config["yolo"].as<std::string>();
-			//nanodet_detecter_ = new NanoDet(nanodet_cfg);
-			yolo_detecter_ = new YOLOv5(yolo_cfg);
+			std::string detecter_type = config["type"].as<std::string>();
+			std::string detecter_cfg = config["config"].as<std::string>();
+
+			detecter_ = new YOLOv5(detecter_cfg);
 			initialized_ = true;
-			INFO("ObjectEngine Init End!");
+
 		}
 
-		~Impl() {}
+		~Impl() {
+			delete detecter_;
+			detecter_ = nullptr;
+		}
 
 		inline int DetectObject(const cv::Mat& img_src, std::vector<ccutil::BBox>* objects) {
-			return yolo_detecter_->EngineInference(img_src, objects);
+			return detecter_->EngineInference(img_src, objects);
 		}
 		inline int DetectObjectBatch(const std::vector<Mat>& img_src, std::vector<std::vector<ccutil::BBox>>* objects) {
-			return yolo_detecter_->EngineInferenceOptim(img_src, objects);
+			return detecter_->EngineInferenceOptim(img_src, objects);
 		}
 
 	private:
 		bool initialized_ = false;
-		NanoDet* nanodet_detecter_;
-		YOLOv5* yolo_detecter_;
+		YOLOv5* detecter_;
 
 	};
 

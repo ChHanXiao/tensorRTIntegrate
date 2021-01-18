@@ -6,7 +6,7 @@ namespace ObjectDetection {
 	Detection::Detection() {}
 	Detection::~Detection() {}
 
-	void Detection::preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
+	void Detection::PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
 
 		int outH = tensor->height();
 		int outW = tensor->width();
@@ -27,7 +27,7 @@ namespace ObjectDetection {
 		tensor->setNormMatGPU(numIndex, flt_img, mean, std, scale_);
 	}
 
-	void Detection::outPutBox(vector<ccutil::BBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize) {
+	void Detection::PostProcess(vector<ccutil::BBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize) {
 		float sw = netInputSize.width / (float)imageSize.width;
 		float sh = netInputSize.height / (float)imageSize.height;
 		float scale_size = std::min(sw, sh);
@@ -45,7 +45,7 @@ namespace ObjectDetection {
 		}
 		objs = keep;
 	}
-	void Detection::outPutBox(vector<ccutil::FaceBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize) {
+	void Detection::PostProcess(vector<ccutil::FaceBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize) {
 		float sw = netInputSize.width / (float)imageSize.width;
 		float sh = netInputSize.height / (float)imageSize.height;
 		float scale_size = std::min(sw, sh);

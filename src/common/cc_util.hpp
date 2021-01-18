@@ -35,7 +35,7 @@ namespace ccutil{
 #define INFOW(...)			ccutil::__log_func(__FILE__, __LINE__, LWARNING, __VA_ARGS__)
 #define INFOE(...)			ccutil::__log_func(__FILE__, __LINE__, LERROR, __VA_ARGS__)
 #define INFOF(...)			ccutil::__log_func(__FILE__, __LINE__, LFATAL, __VA_ARGS__)
-#define LOG(level)			ccutil::LoggerStream(true, level, __FILE__, __LINE__)
+#define LOG_L(level)		ccutil::LoggerStream(true, level, __FILE__, __LINE__)
 #define LOG_IF(level, op)	ccutil::LoggerStream(!(!(op)), level, __FILE__, __LINE__)
 
 	using std::string;

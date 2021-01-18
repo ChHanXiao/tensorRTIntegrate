@@ -1,6 +1,6 @@
 #include "NanoDet.h"
 
-NanoDet::NanoDet(const string &config_file){
+NanoDet::NanoDet(const string &config_file) {
 
 	YAML::Node root = YAML::LoadFile(config_file);
 	YAML::Node config = root["nanodet"];
@@ -23,10 +23,10 @@ NanoDet::NanoDet(const string &config_file){
 	assert(num_classes_ == detect_labels_.size());
 
 	heads_info_ = {
-	// cls_pred|dis_pred|stride
-		{"792", "795",    8},
-		{"814", "817",   16},
-		{"836", "839",   32},
+		// cls_pred|dis_pred|stride
+			{"792", "795",    8},
+			{"814", "817",   16},
+			{"836", "839",   32},
 	};
 	head_out_ = { "792", "814", "836", "795", "817", "839" };
 	LoadEngine();
@@ -51,6 +51,7 @@ int activation_function_softmax(const _Tp* src, _Tp* dst, int length)
 
 	return 0;
 }
+
 
 static Rect decodeBox_nanodet(const float*& pdis_pred, float cellx, float celly, int stride, int reg_max) {
 
@@ -79,7 +80,7 @@ static Rect decodeBox_nanodet(const float*& pdis_pred, float cellx, float celly,
 	return Rect(Point(x, y), Point(r + 1, b + 1));
 }
 
-void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& cls_tensor, const shared_ptr<TRTInfer::Tensor>& loc_tensor, 
+void NanoDet::postProcessCPU(const shared_ptr<TRTInfer::Tensor>& cls_tensor, const shared_ptr<TRTInfer::Tensor>& loc_tensor,
 	int stride, Size netInputSize, float threshold, int num_classes, vector<ccutil::BBox> &bboxs, int reg_max_) {
 
 	int batchSize = cls_tensor->num();
@@ -125,7 +126,7 @@ int NanoDet::EngineInference(const Mat& image, vector<ccutil::BBox>* result) {
 	engine_->input()->resize(1);
 	Size netInputSize = engine_->input()->size();
 	Size imageSize = image.size();
-	preprocessImageToTensor(image, 0, engine_->input());
+	PrepareImage(image, 0, engine_->input());
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;
 	engine_->forward();
@@ -143,7 +144,7 @@ int NanoDet::EngineInference(const Mat& image, vector<ccutil::BBox>* result) {
 	ccutil::Timer time_nms;
 	auto& objs = bboxs;
 	objs = ccutil::nms(objs, nms_threshold_);
-	outPutBox(objs, imageSize, netInputSize);
+	PostProcess(objs, imageSize, netInputSize);
 	INFO("nms time cost = %f", time_nms.end());
 
 	return -1;
@@ -163,7 +164,7 @@ int NanoDet::EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccuti
 	Size netInputSize = engine_->input()->size();
 	vector<Size> imagesSize;
 	for (int i = 0; i < images.size(); i++) {
-		preprocessImageToTensor(images[i], i, engine_->input());
+		PrepareImage(images[i], i, engine_->input());
 		imagesSize.emplace_back(images[i].size());
 	}
 	INFO("preprocess time cost = %f", time_preprocess.end());
@@ -187,7 +188,7 @@ int NanoDet::EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccuti
 	for (int i = 0; i < bboxs.size(); ++i) {
 		auto& objs = bboxs[i];
 		objs = ccutil::nms(objs, nms_threshold_);
-		outPutBox(objs, imagesSize[i], netInputSize);
+		PostProcess(objs, imagesSize[i], netInputSize);
 	}
 	INFO("nms time cost = %f", time_nms.end());
 

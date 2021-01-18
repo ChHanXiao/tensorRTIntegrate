@@ -11,7 +11,7 @@ public:
 	GenderAge();
 	GenderAge(const string &config_file);
 	~GenderAge();
-	void preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
+	void PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
 	int EngineInference(const Mat &image, ccutil::FaceAttribute* result);
 	int EngineInferenceOptim(const vector<Mat>& images, vector<ccutil::FaceAttribute>* result);
 public:

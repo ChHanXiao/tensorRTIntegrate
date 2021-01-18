@@ -409,7 +409,7 @@ namespace Plugin {
 			auto param = layerName.substr(p + 1);
 			Json::Value pjson;
 			if (!Json::Reader().parse(param, pjson)) {
-				LOG(LFATAL) << "can not parse param: " << param.c_str();
+				LOG_L(LFATAL) << "can not parse param: " << param.c_str();
 			}
 
 			//cfg->supportDataType_ = {nvinfer1::DataType::kHALF, nvinfer1::DataType::kFLOAT};

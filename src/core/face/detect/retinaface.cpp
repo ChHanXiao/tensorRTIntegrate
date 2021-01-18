@@ -59,7 +59,8 @@ void RetinaFace::GenerateAnchors() {
 	}
 }
 
-void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& conf,
+
+void RetinaFace::postProcessCPU(const shared_ptr<TRTInfer::Tensor>& conf,
 	const shared_ptr<TRTInfer::Tensor>& offset, 
 	const shared_ptr<TRTInfer::Tensor>& landmark,
 	Mat anchors_matrix, float threshold,
@@ -89,17 +90,14 @@ void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& conf,
 			float y = cy_b - h_b * 0.5;
 			float r = cx_b + w_b * 0.5;
 			float b = cy_b + h_b * 0.5;
-			ccutil::BBox box(Rect(Point(x, y), Point(r + 1, b + 1)));
-			box.label = 0;
-			box.score = *score;
-			ccutil::FaceBox facebox(box);
+			ccutil::FaceBox box(ccutil::BBox(x, y, r, b, *score, 0));
 			if (box.area() > 0)
 				for (int k = 0; k < 5; ++k) {
 					float landmark_x = cx_a + 0.1*landmark->at<float>(0, 0, indx, k * 2) * w_a;
 					float landmark_y = cy_a + 0.1*landmark->at<float>(0, 0, indx, k * 2 + 1) * h_a;
-					facebox.landmark[k] = Point2f(landmark_x, landmark_y);
+					box.landmark[k] = Point2f(landmark_x, landmark_y);
 				}
-			bboxs.push_back(facebox);
+			bboxs.push_back(box);
 		}
 	}
 }
@@ -116,7 +114,7 @@ int RetinaFace::EngineInference(const Mat& image, vector<ccutil::FaceBox>* resul
 	engine_->input()->resize(1);
 	Size netInputSize = engine_->input()->size();
 	Size imageSize = image.size();
-	preprocessImageToTensor(image, 0, engine_->input());
+	PrepareImage(image, 0, engine_->input());
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;
 	engine_->forward();
@@ -131,7 +129,7 @@ int RetinaFace::EngineInference(const Mat& image, vector<ccutil::FaceBox>* resul
 	ccutil::Timer time_nms;
 	auto& objs = facebboxs;
 	objs = ccutil::nms(objs, nms_threshold_);
-	outPutBox(objs, imageSize, netInputSize);
+	PostProcess(objs, imageSize, netInputSize);
 	INFO("nms time cost = %f", time_nms.end());
 
 	return 0;
@@ -150,7 +148,7 @@ int RetinaFace::EngineInferenceOptim(const vector<Mat>& images, vector<vector<cc
 	Size netInputSize = engine_->input()->size();
 	vector<Size> imagesSize;
 	for (int i = 0; i < images.size(); ++i) {
-		preprocessImageToTensor(images[i], i, engine_->input());
+		PrepareImage(images[i], i, engine_->input());
 		imagesSize.emplace_back(images[i].size());
 	}
 	ccutil::Timer time_forward;
@@ -170,7 +168,7 @@ int RetinaFace::EngineInferenceOptim(const vector<Mat>& images, vector<vector<cc
 	for (int i = 0; i < facebboxs.size(); ++i) {
 		auto& objs = facebboxs[i];
 		objs = ccutil::nms(objs, nms_threshold_);
-		outPutBox(objs, imagesSize[i], netInputSize);
+		PostProcess(objs, imagesSize[i], netInputSize);
 	}
 	INFO("nms time cost = %f", time_nms.end());
 

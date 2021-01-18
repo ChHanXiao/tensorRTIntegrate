@@ -7,7 +7,8 @@
 #include <NvInfer.h>
 #include <NvInferPlugin.h>
 #include <NvCaffeParser.h>
-#include <NvOnnxParser.h>
+#include <onnx_parser/NvOnnxParser.h>
+//#include <NvOnnxParser.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -190,7 +191,7 @@ namespace TRTBuilder {
 			width = inputDims.d[3];
 		}
 		else {
-			LOG(LFATAL) << "unsupport inputDims.nbDims " << inputDims.nbDims;
+			LOG_L(LFATAL) << "unsupport inputDims.nbDims " << inputDims.nbDims;
 		}
 		INFOW("ONNX Input Shape: %d x %d x %d x %d", batchsize, channel, height, width);
 
@@ -198,28 +199,34 @@ namespace TRTBuilder {
 		builder->setMaxBatchSize(maxBatchSize);
 		config->setMaxWorkspaceSize(_1_GB);
 
-
-		IOptimizationProfile *profile = builder->createOptimizationProfile();
 		Dims4 minDim, optDim, maxDim;
 		if (inputsDimsSetup.size() == 3)
 		{
+			INFO("inputsDimsSetup.size()=%d", inputsDimsSetup.size());
+			IOptimizationProfile *profile = builder->createOptimizationProfile();
 			minDim = { inputsDimsSetup[0][0], inputsDimsSetup[0][1], inputsDimsSetup[0][2], inputsDimsSetup[0][3] };
 			optDim = { inputsDimsSetup[1][0], inputsDimsSetup[1][1], inputsDimsSetup[1][2], inputsDimsSetup[1][3] };
 			maxDim = { inputsDimsSetup[2][0], inputsDimsSetup[2][1], inputsDimsSetup[2][2], inputsDimsSetup[2][3] };
 			profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, minDim);
 			profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, optDim);
 			profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, maxDim);
+			config->addOptimizationProfile(profile);
 
 		}
 		else if (inputsDimsSetup.size() == 1) {
 			INFO("inputsDimsSetup.size()=%d", inputsDimsSetup.size());
+			IOptimizationProfile *profileCalib = builder->createOptimizationProfile();
+			optDim = { inputsDimsSetup[0][0], inputsDimsSetup[0][1], inputsDimsSetup[0][2], inputsDimsSetup[0][3] };
+			minDim = optDim;
+			maxDim = optDim;
+			profileCalib->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, minDim);
+			profileCalib->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, optDim);
+			profileCalib->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, maxDim);
+			config->setCalibrationProfile(profileCalib);
 		}
 		else {
-			LOG(LFATAL) << "unsupport inputsDimsSetup.size() " << inputsDimsSetup.size();
+			LOG_L(LFATAL) << "unsupport inputsDimsSetup.size() " << inputsDimsSetup.size();
 		}
-
-
-		config->addOptimizationProfile(profile);
 
 		INFOW("Build engine");
 		shared_ptr<ICudaEngine> engine(builder->buildEngineWithConfig(*network, *config), destroyNV<ICudaEngine>);

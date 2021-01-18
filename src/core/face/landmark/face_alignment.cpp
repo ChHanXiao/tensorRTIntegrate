@@ -21,7 +21,7 @@ FaceAlignment::FaceAlignment(const string &config_file) {
 
 FaceAlignment::~FaceAlignment() {}
 
-void FaceAlignment::preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
+void FaceAlignment::PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
 
 	int outH = tensor->height();
 	int outW = tensor->width();
@@ -53,7 +53,7 @@ int FaceAlignment::EngineInference(const Mat& image, vector<cv::Point2f>* result
 	ccutil::Timer time_preprocess;
 	engine_->input()->resize(1);
 	Size imageSize = image.size();
-	preprocessImageToTensor(image, 0, engine_->input());
+	PrepareImage(image, 0, engine_->input());
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;
 	engine_->forward();
@@ -87,7 +87,7 @@ int FaceAlignment::EngineInferenceOptim(const vector<Mat>& images, vector<vector
 	engine_->input()->resize(images.size());
 	vector<Size> imagesSize;
 	for (int i = 0; i < images.size(); i++) {
-		preprocessImageToTensor(images[i], i, engine_->input());
+		PrepareImage(images[i], i, engine_->input());
 		imagesSize.emplace_back(images[i].size());
 	}
 	INFO("preprocess time cost = %f", time_preprocess.end());

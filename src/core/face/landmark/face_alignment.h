@@ -12,7 +12,7 @@ public:
 	FaceAlignment();
 	FaceAlignment(const string &config_file);
 	~FaceAlignment();
-	void preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
+	void PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
 	int EngineInference(const Mat& image, vector<cv::Point2f>* result);
 	int EngineInferenceOptim(const vector<Mat>& images, vector<vector<cv::Point2f>>* result);
 public:

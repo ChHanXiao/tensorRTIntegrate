@@ -15,6 +15,8 @@ public:
 	RetinaFace(const string& config_file);
 	~RetinaFace();
 	void GenerateAnchors();
+	void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& conf, const shared_ptr<TRTInfer::Tensor>& offset,
+		const shared_ptr<TRTInfer::Tensor>& landmark, Mat anchors_matrix, float threshold, vector<ccutil::FaceBox>& bboxs);
 	int EngineInference(const Mat& image, vector<ccutil::FaceBox>* result);
 	int EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccutil::FaceBox>>* result);
 

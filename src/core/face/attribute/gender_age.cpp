@@ -21,7 +21,7 @@ GenderAge::GenderAge(const string& config_file) {
 
 GenderAge::~GenderAge() {}
 
-void GenderAge::preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
+void GenderAge::PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
 
 	int outH = tensor->height();
 	int outW = tensor->width();
@@ -53,7 +53,7 @@ int GenderAge::EngineInference(const Mat &image, ccutil::FaceAttribute* result) 
 
 	ccutil::Timer time_preprocess;
 	engine_->input()->resize(1);
-	preprocessImageToTensor(image, 0, engine_->input());
+	PrepareImage(image, 0, engine_->input());
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;
 	engine_->forward();
@@ -87,7 +87,7 @@ int GenderAge::EngineInferenceOptim(const vector<Mat>& images, vector<ccutil::Fa
 	ccutil::Timer time_preprocess;
 	engine_->input()->resize(images.size());
 	for (int i = 0; i < images.size(); i++) {
-		preprocessImageToTensor(images[i], i, engine_->input());
+		PrepareImage(images[i], i, engine_->input());
 	}
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;

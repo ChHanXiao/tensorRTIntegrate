@@ -5,12 +5,15 @@
 
 #include "core/base/trtmodel.h"
 
-class GhostNet : public TrtModel {
+class GhostNet : public TrtModel{
 
 public:
+
+	GhostNet();
 	GhostNet(const string &config_file);
 	~GhostNet();
-	void preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
+	
+	void PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
 	int EngineInference(const Mat &image, int* result);
 	int EngineInferenceOptim(const vector<Mat>& images, vector<int>* result);
 public:
@@ -21,4 +24,6 @@ public:
 	float scale_;
 };
 
+
 #endif // !GHOSTNET_H
+

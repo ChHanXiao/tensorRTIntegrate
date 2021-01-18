@@ -21,7 +21,7 @@ ArcFace::ArcFace(const string &config_file) {
 
 ArcFace::~ArcFace() {}
 
-void ArcFace::preprocessImageToTensor(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
+void ArcFace::PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
 
 	int outH = tensor->height();
 	int outW = tensor->width();
@@ -53,7 +53,7 @@ int ArcFace::EngineInference(const Mat &image, vector<float>* result) {
 	engine_->input()->resize(1);
 	Size netInputSize = engine_->input()->size();
 	Size imageSize = image.size();
-	preprocessImageToTensor(image, 0, engine_->input());
+	PrepareImage(image, 0, engine_->input());
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;
 	engine_->forward();

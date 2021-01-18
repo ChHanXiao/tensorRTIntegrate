@@ -1,0 +1,13 @@
+centernet:
+    onnx_file:      "./models/detect/centernet/dladcnv2-d3.onnx"
+    engine_file:    "./models/detect/centernet/dladcnv2-d3.trtmodel"
+    maxBatchSize:   5
+    input_Dim:      [[1,3,640,640]]
+    strides:        4
+    obj_threshold:  0.4
+    nms_threshold:  0.6
+    max_objs:       1000
+    num_classes:    80
+    mean:           [0.40789654, 0.44719302, 0.47026115]
+    std:            [0.28863828, 0.27408164, 0.27809835]
+    scale:          0.003921568627451

@@ -1,0 +1,9 @@
+ghostnet:
+    onnx_file:      "./models/classify/ghostnet/ghostnet-d.onnx"
+    engine_file:    "./models/classify/ghostnet/ghostnet-d.trtmodel"
+    labels_file:    "./configs/classify/label.name"
+    maxBatchSize:   5
+    input_Dim:      [[1,3,224,224],[1,3,224,224],[10,3,224,224]]
+    mean:           [ 0.485, 0.456, 0.406 ]
+    std:            [ 0.229, 0.224, 0.225 ]
+    scale:          0.003921568627451

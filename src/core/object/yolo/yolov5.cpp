@@ -1,6 +1,6 @@
 #include "yolov5.h"
 
-YOLOv5::YOLOv5(const string &config_file){
+YOLOv5::YOLOv5(const string &config_file) {
 	YAML::Node root = YAML::LoadFile(config_file);
 	YAML::Node config = root["yolov5s"];
 	onnx_file_ = config["onnx_file"].as<std::string>();
@@ -53,7 +53,7 @@ static Rect decodeBox_yolov5(float dx, float dy, float dw, float dh, float cellx
 	return Rect(Point(x, y), Point(r + 1, b + 1));
 }
 
-void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
+void YOLOv5::postProcessCPU(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
 	const vector<vector<float>>& anchors, vector<ccutil::BBox> &bboxs) {
 
 	int batch = tensor->num();
@@ -119,7 +119,7 @@ int YOLOv5::EngineInference(const Mat& image, vector<ccutil::BBox>* result) {
 	engine_->input()->resize(1);
 	Size netInputSize = engine_->input()->size();
 	Size imageSize = image.size();
-	preprocessImageToTensor(image, 0, engine_->input());
+	PrepareImage(image, 0, engine_->input());
 	INFO("preprocess time cost = %f", time_preprocess.end());
 	ccutil::Timer time_forward;
 	engine_->forward();
@@ -134,7 +134,7 @@ int YOLOv5::EngineInference(const Mat& image, vector<ccutil::BBox>* result) {
 	ccutil::Timer time_nms;
 	auto& objs = bboxs;
 	objs = ccutil::nms(objs, nms_threshold_);
-	outPutBox(objs, imageSize, netInputSize);
+	PostProcess(objs, imageSize, netInputSize);
 	INFO("nms time cost = %f", time_nms.end());
 
 	return 0;
@@ -154,7 +154,7 @@ int YOLOv5::EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccutil
 	Size netInputSize = engine_->input()->size();
 	vector<Size> imagesSize;
 	for (int i = 0; i < images.size(); i++) {
-		preprocessImageToTensor(images[i], i, engine_->input());
+		PrepareImage(images[i], i, engine_->input());
 		imagesSize.emplace_back(images[i].size());
 	}
 	INFO("preprocess time cost = %f", time_preprocess.end());
@@ -174,7 +174,7 @@ int YOLOv5::EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccutil
 	for (int i = 0; i < bboxs.size(); ++i) {
 		auto& objs = bboxs[i];
 		objs = ccutil::nms(objs, nms_threshold_);
-		outPutBox(objs, imagesSize[i], netInputSize);
+		PostProcess(objs, imagesSize[i], netInputSize);
 	}
 	INFO("nms time cost = %f", time_nms.end());
 

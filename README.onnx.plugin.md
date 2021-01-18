@@ -2,7 +2,7 @@
 
 * 该文档受众是对tensorRT有所了解的人，如果不了解可能会比较蒙圈
 
-<br/> 
+ 
 
 #### 1. python代码部分，插件op的处理，并顺利导出
 ```python
@@ -60,7 +60,7 @@ torch.onnx.export(model, (dummy_input1, dummy_input2), 'test.onnx', verbose=True
 * 下载：https://github.com/onnx/onnx-tensorrt/tree/master/third_party
    1. 根据这个链接找到当前onnx-tensorrt所使用和引用的onnx版本（因为onnx本身自己会更新，导致不一样）
    2. 本身onnx是一个独立的库，解析器依赖这里的onnx库，即libonnx_proto.a
-   3. 编译onnx前请安装protobuf，具体步骤去搜索有的，一般是下载代码编译，要求Protobuf v3.8.x：
+   3. 编译onnx前请安装protobuf，具体步骤去搜索有的，一般是下载代码编译，要求Protobuf v3.11.x：
    ```bash
    # 这是protobuf的下载编译参考
    sudo apt-get install autoconf automake libtool curl
@@ -74,62 +74,83 @@ torch.onnx.export(model, (dummy_input1, dummy_input2), 'test.onnx', verbose=True
    sudo ldconfig
    ```
    
-   4. 编译onnx
-   ```bash
-   cd onnx && mkdir build && cd build
-   cmake .. -DONNX_NAMESPACE=onnx2trt_onnx
-   make onnx_proto -j16
-   cp ../onnx/onnx_pb.h onnx/onnx_pb.h
-   cp ../onnx/onnxifi.h onnx/onnxifi.h
+   4. 编译onnx，这时候，我们得到build/libonnx_proto.a（未用？），以及build/onnx底下的各类头文件
+   
+      ```
+      cd onnx && mkdir build && cd build
+      cmake .. -DONNX_NAMESPACE=ONNX_NAMESPACE
+      make onnx_proto -j16
+      cp ../onnx/onnx_pb.h onnx/onnx_pb.h
+      cp ../onnx/onnxifi.h onnx/onnxifi.h
+      ```
+   
+   5. onnx编译后得到以下文件，`onnx_ONNX_NAMESPACE-ml.pb.h `前面(第6行的位置)加上`#include "onnx_pb.h"`避免ONNX_API没有定义的问题[Issue](https://github.com/dlunion/tensorRTIntegrate/issues/11)
+   
+   6. 把cc文件改名cpp，替换到tensorRTIntegrate/src/onnx里面
    ```
-   这时候，我们得到build/libonnx_proto.a，以及build/onnx底下的各类头文件
+   onnx_pb.h
+   onnx-ml.pb.h
+   onnx-operators-ml.pb.h
+   onnx_ONNX_NAMESPACE-ml.pb.cc
+   onnx_ONNX_NAMESPACE-ml.pb.h
+   onnx-operators_ONNX_NAMESPACE-ml.pb.cc
+   onnx-operators_ONNX_NAMESPACE-ml.pb.h
+   ```
 
 
 #### 3. onnx-tensorRT部分
-* 代码下载：https://github.com/onnx/onnx-tensorrt
-* 使用方式：
-   1. 编译为so/dll
-        * 该方法直接下载项目后，cmake编译即可，生成的so或者dll引入到项目中替代tensorRT发布时的libnvonnxparser.so或者dll
-        * 该方法比较简单，但是对于需要定制修改调试时比较不方便
-   2. 融入代码到工程
-        * 该方法是将该代码融入到自己的工程中使用，此时已不需要libnvonnxparser.so或者dll
-        * 该方法难度比较大，但是调试维护等比较方便
-        * 该方法是这里推荐的做法
+- 代码下载：https://github.com/onnx/onnx-tensorrt
 
-* 按照上面是使用方法2操作：
-   1. 由于这个项目还涉及到python相关api，会依赖python库，如果没有这个需求，可以只保留必要的代码部分。或者你也可以把全部代码加入到自己项目中，以下是我抽取的部分cpp和hpp
-   ```
-    builtin_op_importers.cpp
-    builtin_op_importers.hpp
-    ImporterContext.hpp
-    ModelImporter.cpp
-    ModelImporter.hpp
-    NvOnnxParser.cpp
-    NvOnnxParser.h
-    onnx2trt.hpp
-    onnx2trt_utils.cpp
-    onnx2trt_utils.hpp
-    OnnxAttrs.cpp
-    OnnxAttrs.hpp
-    onnx_utils.hpp
-    ShapedWeights.cpp
-    ShapedWeights.hpp
-    ShapeTensor.cpp
-    ShapeTensor.hpp
-    Status.hpp
-    TensorOrWeights.hpp
-    toposort.hpp
-    trt_utils.hpp
-    utils.hpp
-   ```
+- 使用方式：
+  1. 编译为so/dll
+  2. 该方法直接下载项目后，cmake编译即可，生成的so或者dll引入到项目中替代tensorRT发布时的libnvonnxparser.so或者dll
+  3. 该方法比较简单，但是对于需要定制修改调试时比较不方便
 
-   * 配置头文件目录：-I/datav/newbb/build/tensorRT7.0Base/onnx/build，代码包含头文件是#include <onnx/onnx_pb.h>
-   * 配置库文件目录：-L/datav/newbb/build/tensorRT7.0Base/onnx/build，引用到了libonnx_proto.a
-   * 编译你的项目
-      1. 一定要添加的编译选项：-DONNX_ML 和 -DONNX_NAMESPACE=onnx2trt_onnx
-      2. 添加protobuf和onnx的库引用：-pthread -lprotobuf -lonnx_proto，如果cmake可以直接find_package查找protobuf，这里一定要注意，如果makefile，一定要-pthread后-lprotobuf，使用多线程库
+- 融入代码到工程
+  1. 该方法是将该代码融入到自己的工程中使用，此时已不需要libnvonnxparser.so或者dll
+  2. 该方法难度比较大，但是调试维护等比较方便
+  3. 该方法是这里推荐的做法
 
-   * 此时应该是可以编译完成自己的工程，还没有涉及到修改
+- 按照上面是使用方法2操作：
+  1. 由于这个项目还涉及到python相关api，会依赖python库，如果没有这个需求，可以只保留必要的代码部分。或者你也可以把全部代码加入到自己项目中，以下是我抽取的部分cpp和hpp，onnx-tensorRT有更新，所以全加进去了。
+
+```
+ builtin_op_importers.cpp
+ builtin_op_importers.hpp
+ ImporterContext.hpp
+ ModelImporter.cpp
+ ModelImporter.hpp
+ NvOnnxParser.cpp
+ NvOnnxParser.h
+ onnx2trt.hpp
+ onnx2trt_utils.cpp
+ onnx2trt_utils.hpp
+ OnnxAttrs.cpp
+ OnnxAttrs.hpp
+ onnx_utils.hpp
+ ShapedWeights.cpp
+ ShapedWeights.hpp
+ ShapeTensor.cpp
+ ShapeTensor.hpp
+ Status.hpp
+ TensorOrWeights.hpp
+ toposort.hpp
+ trt_utils.hpp
+ utils.hpp
+```
+
+- 配置头文件目录：-I/datav/newbb/build/tensorRT7.0Base/onnx/build，代码包含头文件是#include <onnx/onnx_pb.h>
+
+- 配置库文件目录：-L/datav/newbb/build/tensorRT7.0Base/onnx/build，引用到了libonnx_proto.a
+
+* 编译你的项目
+   1. 一定要添加的编译选项：-DONNX_ML 和 -DONNX_NAMESPACE=onnx2trt_onnx
+   2. 添加protobuf和onnx的库引用：-pthread -lprotobuf -lonnx_proto，如果cmake可以直接find_package查找protobuf，这里一定要注意，如果makefile，一定要-pthread后-lprotobuf，使用多线程库。
+* 此时应该是可以编译完成自己的工程，还没有涉及到修改。
+* 新版本onnx-tensorRT 中`onnx2trt_utils.hpp `的`#define LOG(msg, severity)  `和`cc_util.hpp`的`#define LOG(level)`冲突，改个名字`#define LOG_L(level)`，注意其他有调用的地方。
+* tensorRT的upsample和pytorch配合就是个大坑。作者解决方案是[这里](https://github.com/dlunion/tensorRTIntegrate/blob/8b6ee3c60d4cf30148d3ee6f6947b1de5b03e4ed/src/onnx_parser/builtin_op_importers.cpp#L3388)，注意看#if 0
+
+原工程中`nvonnxparser::createParser(*network, dimsSetup, gLogger)`相比原本的函数多传入个`std::vector<nvinfer1::Dims>& dims`，[可以去掉Issue](https://github.com/dlunion/tensorRTIntegrate/issues/27)
 
 #### 5. 写自定义op实现
    1. 他的入口是从NvOnnxParser.cpp的createNvOnnxParser_INTERNAL开始
@@ -160,9 +181,10 @@ torch.onnx.export(model, (dummy_input1, dummy_input2), 'test.onnx', verbose=True
         * 通过REGISTER_TENSORRT_PLUGIN(HSwishCreator)宏，实现一个插件注册过程
         * 这里就是一个插件的例子：TensorRT-7.0.0.11/samples/sampleUffPluginV2Ext/sampleUffPluginV2Ext.cpp
         * **注意对于onnx，采用IPluginV2Ext实现（注意不是IPluginV2，IPluginV2不支持explicit batch），通过creator和REGISTER_TENSORRT_PLUGIN进行注册是比较推荐的，请不要使用PluginFactory和IPluginExt或者IPlugin等等，他会被抛弃，并且在明确batch_size（explicit batch）问题上会报错**
+* **插件继承IPluginV2Ext，所以dynamic batch有点问题，待查看**
+        
 
-        <br/>
-
+        
         8. 一个插件的实现案例
         ```c++
         DEFINE_BUILTIN_OP_IMPORTER(HSwish)
@@ -171,8 +193,8 @@ torch.onnx.export(model, (dummy_input1, dummy_input2), 'test.onnx', verbose=True
             // 对于python案例：
             // @staticmethod
             // def symbolic(g, input, bias):
-            //      return g.op("HSwish", input, bias, info_s="string attribute", kernel_size_i=3, eps_f=3e-2)
-
+    //      return g.op("HSwish", input, bias, info_s="string attribute", kernel_size_i=3, eps_f=3e-2)
+        
             //这里的input是tensor，而bias是weight
             //   因此inputs.at(0).is_tensor() = true
             //   因此inputs.at(1).is_weights() = true

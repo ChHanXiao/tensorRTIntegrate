@@ -170,7 +170,7 @@ namespace Plugin {
 			this->config_->configDataType_ = TRTInfer::DataType::dtHalfloat;
 		}
 		else {
-			LOG(LFATAL) << "unsuport datatype: " << (int)type;
+			LOG_L(LFATAL) << "unsuport datatype: " << (int)type;
 		}
 		this->config_->configPluginFormat_ = format;
 		this->config_->configMaxbatchSize_ = maxBatchSize;

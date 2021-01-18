@@ -12,6 +12,8 @@ class YOLOv5 : public Detection {
 public:
 	YOLOv5(const string &config_file);
 	~YOLOv5();
+	void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& tensor, int stride, float threshold, int num_classes,
+		const vector<vector<float>>& anchors, vector<ccutil::BBox> &bboxs);
 	int EngineInference(const Mat& image, vector<ccutil::BBox>* result);
 	int EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccutil::BBox>>* result);
 
@@ -22,4 +24,5 @@ private:
 	vector<vector<vector<float>>> anchor_grid_ ;
 };
 
-#endif
+
+#endif // !YOLOV5_H

@@ -18,6 +18,8 @@ class NanoDet : public Detection {
 public:
 	NanoDet(const string &config_file);
 	~NanoDet();
+	void postProcessCPU(const shared_ptr<TRTInfer::Tensor>& cls_tensor, const shared_ptr<TRTInfer::Tensor>& loc_tensor,
+		int stride, Size netInputSize, float threshold, int num_classes, vector<ccutil::BBox> &bboxs, int reg_max_);
 	int EngineInference(const Mat& image, vector<ccutil::BBox>* result);
 	int EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccutil::BBox>>* result);
 
@@ -28,6 +30,7 @@ private:
 	map<int, string> detect_labels_;
 	int reg_max_ = 7;
 };
+
 
 #endif // !NANODET_H
 
