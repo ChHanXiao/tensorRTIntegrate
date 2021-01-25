@@ -1,19 +1,19 @@
 日志
 
-- 添加原工程的[centernet](./workspace/models/detect/centernet/README.md)、[dbface](./workspace/models/face/dbface/README.md)，带HSigmoid、DCNv2层，插件支持，dynamic batch 未支持
-- 添加原工程支持的插件，加入onnx、onnx-tensorrt代码，解析不用Tensorrt中nvonnxparser.lib，便于插件修改，[修改参考](./README.onnx.plugin.md)
+- 添加原工程的[centernet](./workspace/models/detect/centernet/README.md)、[dbface](./workspace/models/face/dbface/README.md)，dynamic batch 未支持
+- 添加原工程插件，解析不用Tensorrt中nvonnxparser.lib，加入onnx-tensorrt便于插件修改[修改参考](./README.onnx.plugin.md)
 - 添加人脸识别相似度计算，来源[mnn_example](https://github.com/MirrorYuChen/mnn_example)
 - 添加[alignment、gender-age](./workspace/models/face/gender-age/README.md)，整合人脸代码，检测-对齐-关键点-性别|年龄-提取特征
-- 添加[ghostnet](./workspace/models/classifier/ghostnet/README.md)
+- 添加[ghostnet](./workspace/models/classify/ghostnet/README.md)
 - 添加[arcface](./workspace/models/face/arcface/README.md)，mxnet2onnx 可用，dynamic batch 未支持，坑比较多[issue](https://github.com/SthPhoenix/InsightFace-REST/issues/9)
 - 添加[retinaface](./workspace/models/face/retinaface/README.md)，使用[pytorch版](https://github.com/biubug6/Pytorch_Retinaface)，[mxnet版](https://github.com/deepinsight/insightface)，
 - 添加[centerface](./workspace/models/face/centerface/README.md)
 - 添加[nanodet](./workspace/models/detect/nanodet/README.md)，dynamic batch 未支持和shufflenet中Reshape层有点问题
-- 更新库[lean](./lean/README.md)及模型（cuda11.0、cudnn8.0.5、tensorRT7.2.2.3，[转onnx流程](https://github.com/ChHanXiao/tensorRTIntegrate/blob/master/workspace/models/readme.md) 可用opset_version=12）
+- 更新库[lean](./lean/README.md)及模型（cuda11.0、cudnn8.0.5、tensorRT7.2.2.3，[转onnx流程](./workspace/models/readme.md)）
 - YOLOv3-SPP、YOLOv4检测流程同YOLOv5，仅修改config即可
 - 添加yaml读取配置文件
-- 添加[YOLOv5](./workspace/models/detect/yolov5/README.md)，直接使用版focus未优化
-- onnx的plugin暂时移除，cmake编译未修改
+- 添加[YOLOv5](./workspace/models/detect/yolo/README.md)，直接使用版focus未优化
+- ~~onnx的plugin暂时移除~~，cmake编译未修改
 
 =======================================================================
 
