@@ -97,7 +97,6 @@ int GenderAge::EngineInferenceOptim(const vector<Mat>& images, vector<ccutil::Fa
 	auto out = engine_->tensor("fc1");
 	auto outSize = out->channel();
 	
-
 	for (int i = 0; i < images.size(); ++i) {
 		float* out_ptr = out->cpu<float>(i, 0);
 		auto& result = attrGenderAge[i];

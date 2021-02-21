@@ -118,7 +118,7 @@ int NanoDet::EngineInference(const Mat& image, vector<ccutil::BBox>* result) {
 
 	if (engine_ == nullptr) {
 		INFO("EngineInference failure, model is nullptr");
-		return 0;
+		return -1;
 	}
 	vector<ccutil::BBox>& bboxs = *result;
 
@@ -147,7 +147,7 @@ int NanoDet::EngineInference(const Mat& image, vector<ccutil::BBox>* result) {
 	PostProcess(objs, imageSize, netInputSize);
 	INFO("nms time cost = %f", time_nms.end());
 
-	return -1;
+	return 0;
 }
 
 int NanoDet::EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccutil::BBox>>* result) {

@@ -1,7 +1,7 @@
 #include "face_engine.h"
 #include "detect/retinaface.h"
 #include "detect/centerface.h"
-#include "landmark/face_alignment.h"
+#include "landmark/landmark.h"
 #include "attribute/gender_age.h"
 #include "recognize/aligner.h"
 #include "recognize/arcface.h"
@@ -18,12 +18,12 @@ namespace mirror {
 			YAML::Node root = YAML::LoadFile(config_file);
 			YAML::Node config = root["face"];
 			std::string detect_cfg = config["detect"].as<std::string>();
-			std::string face_alignment_cfg = config["face_alignment"].as<std::string>();
+			std::string landmark_cfg = config["landmark"].as<std::string>();
 			std::string gender_age_cfg = config["gender_age"].as<std::string>();
 			std::string recognize_cfg = config["recognize"].as<std::string>();
 			db_name_ = config["db_path"].as<std::string>();
 			detecter_ = new RetinaFace(detect_cfg);
-			landmarker_ = new FaceAlignment(face_alignment_cfg);
+			landmarker_ = new Landmarker(landmark_cfg);
 			genderAge_ = new GenderAge(gender_age_cfg);
 			aligner_ = new Aligner();
 			recognizer_ = new ArcFace(recognize_cfg);
@@ -71,7 +71,7 @@ namespace mirror {
 		bool initialized_ = false;
 		std::string db_name_;
 		RetinaFace* detecter_;
-		FaceAlignment* landmarker_;
+		Landmarker* landmarker_;
 		GenderAge* genderAge_;
 		Aligner* aligner_;
 		ArcFace* recognizer_;

@@ -1,17 +1,17 @@
 #pragma once
 
-#ifndef FACE_ALIGNMENT_H
-#define FACE_ALIGNMENT_H
+#ifndef LANDMARK_H
+#define LANDMARK_H
 
 #include "core/base/trtmodel.h"
 
-class FaceAlignment : public TrtModel {
+class Landmarker : public TrtModel {
 
 public:
 
-	FaceAlignment();
-	FaceAlignment(const string &config_file);
-	~FaceAlignment();
+	Landmarker();
+	Landmarker(const string &config_file);
+	~Landmarker();
 	void PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
 	int EngineInference(const Mat& image, vector<cv::Point2f>* result);
 	int EngineInferenceOptim(const vector<Mat>& images, vector<vector<cv::Point2f>>* result);
@@ -21,4 +21,4 @@ public:
 	float scale_;
 };
 
-#endif // !FACE_ALIGNMENT_H
+#endif // !LANDMARK_H

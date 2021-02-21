@@ -2,8 +2,8 @@ nanodet:
     onnx_file:      "./models/detect/nanodet/nanodet_m.onnx"
     engine_file:    "./models/detect/nanodet/nanodet_m.trtmodel"
     labels_file:    "./configs/detect/coco.names"
-    maxBatchSize:   5
-    input_Dim:      [[1,3,320,320],[1,3,320,320],[5,3,320,320]]
+    maxBatchSize:   50
+    input_Dim:      [[1,3,320,320],[1,3,320,320],[50,3,320,320]]
     strides:        [8, 16, 32]
     num_anchors:    [3,  3,  3]
     anchors:        [[[10.,13.], [16.,30.], [33.,23.]], [[30.,61.], [62.,45.], [59.,119.]], [[116.,90.], [156.,198.], [373.,326.]]]

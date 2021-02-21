@@ -12,8 +12,11 @@
 #include "core/face/detect/dbface.h"
 #include "core/face/detect/centerface.h"
 #include "core/face/detect/retinaface.h"
+#include "core/face/recognize/arcface.h"
+#include "core/face/landmark/landmark.h"
+#include "core/face/attribute/gender_age.h"
 
-using namespace std;
+//using namespace std;
 
 int TestAttribute() {
 	mirror::FaceEngine face("configs/face.yaml");
@@ -149,11 +152,10 @@ int TestClassify() {
 int TestNanoDet() {
 
 #if 0
-	cv::Mat image = cv::imread("imgs/www.jpg");
+	cv::Mat image = cv::imread("imgs/zidane.jpg");
 	NanoDet object("configs/detect/nanodet.yaml");
 	std::vector<ccutil::BBox> result;
 	object.EngineInference(image, &result);
-
 
 	for (int i = 0; i < result.size(); ++i) {
 		auto& obj = result[i];
@@ -161,20 +163,35 @@ int TestNanoDet() {
 	}
 	imwrite(ccutil::format("results/object.jpg"), image);
 #else
-	std::vector<cv::Mat> images{ cv::imread("imgs/zidane.jpg") };
+	//std::vector<cv::Mat> images{ cv::imread("imgs/zidane.jpg") };
+	cv::Mat image1 = cv::imread("imgs/zidane.jpg");
+	std::vector<cv::Mat> images;
+	for (int j = 0; j < 50; ++j) {
+		images.push_back(image1);
+	}
+
 	NanoDet object("configs/detect/nanodet.yaml");
 	std::vector<std::vector<ccutil::BBox>> results;
-	object.EngineInferenceOptim(images, &results);
-
-	for (int j = 0; j < images.size(); ++j) {
-		auto& objs = results[j];
-		INFO("objs.length = %d", objs.size());
-		for (int i = 0; i < objs.size(); ++i) {
-			auto& obj = objs[i];
-			ccutil::drawbbox(images[j], obj);
-		}
-		imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
+	ccutil::Timer time_genderage;
+	int count = 0;
+	while (count < 100) {
+		count++;
+		results.clear();
+		object.EngineInferenceOptim(images, &results);
 	}
+	INFO("genderage_face cost = %f", time_genderage.end() / 100);//19ms
+
+
+	//object.EngineInferenceOptim(images, &results);
+	//for (int j = 0; j < images.size(); ++j) {
+	//	auto& objs = results[j];
+	//	INFO("objs.length = %d", objs.size());
+	//	for (int i = 0; i < objs.size(); ++i) {
+	//		auto& obj = objs[i];
+	//		ccutil::drawbbox(images[j], obj);
+	//	}
+	//	imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
+	//}
 
 #endif
 
@@ -377,12 +394,70 @@ int TestRetinaFace() {
 	return 0;
 }
 
+int TestArcFace() {
+	cv::Mat image1 = cv::imread("imgs/recognizer/test1.jpg");
+	std::vector<cv::Mat> images;
+	for (int j = 0; j < 100; ++j) {
+		images.push_back(image1);
+	}
+	ArcFace recognize_face("./configs/face/arcface.yaml");
+	vector<vector<float>> result;
+	ccutil::Timer time_recognize;
+	int count = 0;
+	while (count < 100){
+		count++;
+		result.clear();
+		recognize_face.EngineInferenceOptim(images, &result);
+	}
+	INFO("recognize_face cost = %f", time_recognize.end()/100);//90ms/52ms/0.61ms-ave146
+
+	return 0;
+}
+
+int TestLandmark() {
+	cv::Mat image1 = cv::imread("imgs/recognizer/test1.jpg");
+	std::vector<cv::Mat> images;
+	for (int j = 0; j < 100; ++j) {
+		images.push_back(image1);
+	}
+	Landmarker landmark_face("./configs/face/landmark.yaml");
+	std::vector<std::vector<cv::Point2f>> keypoints;
+	ccutil::Timer time_landmark;
+	int count = 0;
+	while (count < 100) {
+		count++;
+		keypoints.clear();
+		landmark_face.EngineInferenceOptim(images, &keypoints);
+	}
+	INFO("recognize_face cost = %f", time_landmark.end() / 100);//251ms/27ms/9ms-ave291ms
+
+	return 0;
+}
+
+int TestGenderAge() {
+	cv::Mat image1 = cv::imread("imgs/recognizer/test1.jpg");
+	std::vector<cv::Mat> images;
+	for (int j = 0; j < 100; ++j) {
+		images.push_back(image1);
+	}
+	GenderAge genderage_face("./configs/face/gender_age.yaml");
+	std::vector<ccutil::FaceAttribute> result;
+	ccutil::Timer time_genderage;
+	int count = 0;
+	while (count < 100) {
+		count++;
+		result.clear();
+		genderage_face.EngineInferenceOptim(images, &result);
+	}
+	INFO("genderage_face cost = %f", time_genderage.end() / 100);//19ms
+
+	return 0;
+}
+
 
 int main() {
-
-	TestCenterNet();
-
-
+	TestNanoDet();
+	
 	INFO("done.");
 
 	return 0;

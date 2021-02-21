@@ -1,12 +1,12 @@
 
-#include "face_alignment.h"
+#include "landmark.h"
 
-FaceAlignment::FaceAlignment() {}
+Landmarker::Landmarker() {}
 
-FaceAlignment::FaceAlignment(const string &config_file) {
+Landmarker::Landmarker(const string &config_file) {
 
 	YAML::Node root = YAML::LoadFile(config_file);
-	YAML::Node config = root["face_alignment"];
+	YAML::Node config = root["landmark"];
 	onnx_file_ = config["onnx_file"].as<std::string>();
 	engine_file_ = config["engine_file"].as<std::string>();
 	maxBatchSize_ = config["maxBatchSize"].as<int>();
@@ -19,9 +19,9 @@ FaceAlignment::FaceAlignment(const string &config_file) {
 	LoadEngine();
 }
 
-FaceAlignment::~FaceAlignment() {}
+Landmarker::~Landmarker() {}
 
-void FaceAlignment::PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
+void Landmarker::PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor) {
 
 	int outH = tensor->height();
 	int outW = tensor->width();
@@ -38,11 +38,10 @@ void FaceAlignment::PrepareImage(const Mat& image, int numIndex, const shared_pt
 		mean[i] = mean_[i];
 		std[i] = std_[i];
 	}
-
 	tensor->setNormMatGPU(numIndex, flt_img, mean, std, scale_);
 }
 
-int FaceAlignment::EngineInference(const Mat& image, vector<cv::Point2f>* result) {
+int Landmarker::EngineInference(const Mat& image, vector<cv::Point2f>* result) {
 
 	if (engine_ == nullptr) {
 		INFO("EngineInference failure, model is nullptr");
@@ -74,16 +73,15 @@ int FaceAlignment::EngineInference(const Mat& image, vector<cv::Point2f>* result
 	return 0;
 }
 
-int FaceAlignment::EngineInferenceOptim(const vector<Mat>& images, vector<vector<cv::Point2f>>* result) {
+int Landmarker::EngineInferenceOptim(const vector<Mat>& images, vector<vector<cv::Point2f>>* result) {
 
 	if (engine_ == nullptr) {
 		INFO("EngineInference failure, model is nullptr");
 		return -1;
 	}
 	vector<vector<cv::Point2f>>& alignments = *result;
-	alignments.resize(images.size());
-
 	ccutil::Timer time_preprocess;
+	alignments.resize(images.size());
 	engine_->input()->resize(images.size());
 	vector<Size> imagesSize;
 	for (int i = 0; i < images.size(); i++) {
@@ -91,11 +89,12 @@ int FaceAlignment::EngineInferenceOptim(const vector<Mat>& images, vector<vector
 		imagesSize.emplace_back(images[i].size());
 	}
 	INFO("preprocess time cost = %f", time_preprocess.end());
+
 	ccutil::Timer time_forward;
 	engine_->forward();
 	INFO("forward time cost = %f", time_forward.end());
-	ccutil::Timer time_decode;
 
+	ccutil::Timer time_decode;
 	auto out = engine_->tensor("fc1");
 	auto outSize = out->channel();
 	for (int i = 0; i < images.size(); ++i) {

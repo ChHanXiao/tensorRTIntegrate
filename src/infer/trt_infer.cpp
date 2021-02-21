@@ -445,9 +445,7 @@ namespace TRTInfer {
 			ms[c] = (ms[c] - mean[c]) / std[c];
 	}
 
-	void Tensor::setMat(int n, const cv::Mat& _image) {
-
-		cv::Mat image = _image;
+	void Tensor::setMat(int n, const cv::Mat& image) {
 		Assert(!image.empty() && n < num_ && image.channels() == channel_ && CV_MAT_DEPTH(image.type()) == CV_32F && type() == DataType::dtFloat);
 		toCPU(false);
 

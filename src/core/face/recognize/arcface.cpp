@@ -68,3 +68,35 @@ int ArcFace::EngineInference(const Mat &image, vector<float>* result) {
 	return 0;
 }
 
+int ArcFace::EngineInferenceOptim(const vector<Mat>& images, vector<vector<float>>* result) {
+
+	if (engine_ == nullptr) {
+		INFO("EngineInferenceOptim failure, model is nullptr");
+		return -1;
+	}
+	vector<vector<float>>& facefeature = *result;
+	ccutil::Timer time_preprocess;
+	facefeature.resize(images.size());
+	engine_->input()->resize(images.size());
+	vector<Size> imagesSize;
+	for (int i = 0; i < images.size(); ++i) {
+		PrepareImage(images[i], i, engine_->input());
+		imagesSize.emplace_back(images[i].size());
+	}
+	INFO("preprocess time cost = %f", time_preprocess.end());
+
+	ccutil::Timer time_forward;
+	engine_->forward();
+	INFO("forward time cost = %f", time_forward.end());
+
+	ccutil::Timer time_decode;
+	auto out = engine_->tensor("fc1");
+	for (int i = 0; i < images.size(); ++i) {
+		float* out_ptr = out->cpu<float>(i, 0);
+		vector<float> facefeaturetmp(out_ptr, out_ptr + out->channel());
+		facefeature[i] = facefeaturetmp;
+	}
+	INFO("decode time cost = %f", time_decode.end());
+
+	return 0;
+}

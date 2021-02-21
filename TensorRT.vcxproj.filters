@@ -109,9 +109,6 @@
     <ClCompile Include="src\core\face\detect\retinaface.cpp">
       <Filter>src\core\face\detect</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\face\landmark\face_alignment.cpp">
-      <Filter>src\core\face\landmark</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\face\attribute\gender_age.cpp">
       <Filter>src\core\face\attribute</Filter>
     </ClCompile>
@@ -187,6 +184,9 @@
     <ClCompile Include="src\core\face\detect\dbface.cpp">
       <Filter>src\core\face\detect</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\face\landmark\landmark.cpp">
+      <Filter>src\core\face\landmark</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\cc_util.hpp">
@@ -248,9 +248,6 @@
     </ClInclude>
     <ClInclude Include="src\core\face\detect\retinaface.h">
       <Filter>src\core\face\detect</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\face\landmark\face_alignment.h">
-      <Filter>src\core\face\landmark</Filter>
     </ClInclude>
     <ClInclude Include="src\core\face\attribute\gender_age.h">
       <Filter>src\core\face\attribute</Filter>
@@ -386,6 +383,9 @@
     </ClInclude>
     <ClInclude Include="src\infer\dbface_backend.hpp">
       <Filter>src\infer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face\landmark\landmark.h">
+      <Filter>src\core\face\landmark</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

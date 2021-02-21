@@ -7,6 +7,7 @@
 #include <NvInfer.h>
 #include <NvInferPlugin.h>
 #include <NvCaffeParser.h>
+#include <NvUffParser.h>
 #include <onnx_parser/NvOnnxParser.h>
 //#include <NvOnnxParser.h>
 #include <string>
@@ -114,11 +115,12 @@ namespace TRTBuilder {
 		shared_ptr<INetworkDefinition> network;
 		shared_ptr<ICaffeParser> caffeParser;
 		shared_ptr<nvonnxparser::IParser> onnxParser;
+		shared_ptr<nvuffparser::IUffParser> uffParser;
 
 		shared_ptr<nvcaffeparser1::IPluginFactoryExt> pluginFactory;
 		if (source.type() == ModelSourceType_FromCaffe) {
 
-			network = shared_ptr<INetworkDefinition>(builder->createNetwork(), destroyNV<INetworkDefinition>);
+			network = shared_ptr<INetworkDefinition>(builder->createNetworkV2(0U), destroyNV<INetworkDefinition>);
 			caffeParser.reset(createCaffeParser(), destroyNV<ICaffeParser>);
 			if (!caffeParser) {
 				INFOW("Can not create caffe parser.");
@@ -168,6 +170,17 @@ namespace TRTBuilder {
 			}
 		}
 		else {
+			//TODO
+			//network = shared_ptr<INetworkDefinition>(builder->createNetworkV2(0U), destroyNV<INetworkDefinition>);
+			//uffParser.reset(nvuffparser::createUffParser(), destroyNV<nvuffparser::IUffParser>);
+			//if (!uffParser) {
+			//	INFOW("Can not create tf parser.");
+			//	return false;
+			//}
+			//uffParser->registerInput("Input_0", DimsCHW(1, 28, 28), nvuffparser::UffInputOrder::kNCHW);
+			//uffParser->registerOutput("Binary_3");
+			//uffParser->parse("uffFile", *network, nvinfer1::DataType::kFLOAT);
+
 			INFO("not implementation source type: %d", source.type());
 			Assert(false);
 		}
@@ -178,7 +191,6 @@ namespace TRTBuilder {
 		int channel = 0;
 		int height = 0;
 		int width = 0;
-
 		if (inputDims.nbDims == 3) {
 			channel = inputDims.d[0];
 			height = inputDims.d[1];

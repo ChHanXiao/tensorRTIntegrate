@@ -26,7 +26,7 @@
     <ClCompile Include="src\core\face\detect\dbface.cpp" />
     <ClCompile Include="src\core\face\detect\retinaface.cpp" />
     <ClCompile Include="src\core\face\face_engine.cpp" />
-    <ClCompile Include="src\core\face\landmark\face_alignment.cpp" />
+    <ClCompile Include="src\core\face\landmark\landmark.cpp" />
     <ClCompile Include="src\core\face\recognize\aligner.cpp" />
     <ClCompile Include="src\core\face\recognize\arcface.cpp" />
     <ClCompile Include="src\core\object\centernet\centernet.cpp" />
@@ -70,7 +70,7 @@
     <ClInclude Include="src\core\face\detect\dbface.h" />
     <ClInclude Include="src\core\face\detect\retinaface.h" />
     <ClInclude Include="src\core\face\face_engine.h" />
-    <ClInclude Include="src\core\face\landmark\face_alignment.h" />
+    <ClInclude Include="src\core\face\landmark\landmark.h" />
     <ClInclude Include="src\core\face\recognize\aligner.h" />
     <ClInclude Include="src\core\face\recognize\arcface.h" />
     <ClInclude Include="src\core\object\centernet\centernet.h" />

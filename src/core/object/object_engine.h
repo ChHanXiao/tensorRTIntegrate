@@ -26,6 +26,4 @@ namespace mirror {
 
 }
 
-
-
 #endif // !OBJECTER_H
