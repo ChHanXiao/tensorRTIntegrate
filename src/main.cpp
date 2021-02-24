@@ -151,12 +151,18 @@ int TestClassify() {
 
 int TestNanoDet() {
 
-#if 0
-	cv::Mat image = cv::imread("imgs/zidane.jpg");
-	NanoDet object("configs/detect/nanodet.yaml");
+#if 1
+	cv::Mat image = cv::imread("imgs/obj2.jpg");
+	NanoDet object("configs/detect/nanodet-EfficientNet-Lite2_512.yaml");
 	std::vector<ccutil::BBox> result;
-	object.EngineInference(image, &result);
-
+	ccutil::Timer time_genderage;
+	int count = 0;
+	while (count < 100) {
+		count++;
+		result.clear();
+		object.EngineInference(image, &result);
+	}
+	INFO("nanodet cost = %f", time_genderage.end() / 100);
 	for (int i = 0; i < result.size(); ++i) {
 		auto& obj = result[i];
 		ccutil::drawbbox(image, obj);
@@ -164,17 +170,17 @@ int TestNanoDet() {
 	imwrite(ccutil::format("results/object.jpg"), image);
 #else
 	//std::vector<cv::Mat> images{ cv::imread("imgs/zidane.jpg") };
-	cv::Mat image1 = cv::imread("imgs/zidane.jpg");
+	cv::Mat image1 = cv::imread("imgs/obj2.jpg");
 	std::vector<cv::Mat> images;
-	for (int j = 0; j < 50; ++j) {
+	for (int j = 0; j < 10; ++j) {
 		images.push_back(image1);
 	}
 
-	NanoDet object("configs/detect/nanodet.yaml");
+	NanoDet object("configs/detect/nanodet-m.yaml");
 	std::vector<std::vector<ccutil::BBox>> results;
 	ccutil::Timer time_genderage;
 	int count = 0;
-	while (count < 100) {
+	while (count < 10) {
 		count++;
 		results.clear();
 		object.EngineInferenceOptim(images, &results);
@@ -182,19 +188,17 @@ int TestNanoDet() {
 	INFO("genderage_face cost = %f", time_genderage.end() / 100);//19ms
 
 
-	//object.EngineInferenceOptim(images, &results);
-	//for (int j = 0; j < images.size(); ++j) {
-	//	auto& objs = results[j];
-	//	INFO("objs.length = %d", objs.size());
-	//	for (int i = 0; i < objs.size(); ++i) {
-	//		auto& obj = objs[i];
-	//		ccutil::drawbbox(images[j], obj);
-	//	}
-	//	imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
-	//}
+	for (int j = 0; j < images.size(); ++j) {
+		auto& objs = results[j];
+		INFO("objs.length = %d", objs.size());
+		for (int i = 0; i < objs.size(); ++i) {
+			auto& obj = objs[i];
+			ccutil::drawbbox(images[j], obj);
+		}
+		imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
+	}
 
 #endif
-
 
 	return 0;
 }

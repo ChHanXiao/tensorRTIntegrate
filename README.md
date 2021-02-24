@@ -1,5 +1,6 @@
 日志
 
+- 添加nanodet多种backbone，[EfficientNet-lite](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet/lite) [Rep-VGG](https://github.com/DingXiaoH/RepVGG)，因为有reshape层，dynamic batch不支持
 - 添加原工程的[centernet](./workspace/models/detect/centernet/README.md)、[dbface](./workspace/models/face/dbface/README.md)，dynamic batch 未支持
 - 添加原工程插件，解析不用Tensorrt中nvonnxparser.lib，加入onnx-tensorrt便于[插件修改](./README.onnx.plugin.md)
 - 添加人脸相似度计算，参考[mnn_example](https://github.com/MirrorYuChen/mnn_example)整合人脸代码，检测-对齐-关键点-性别|年龄-相似度

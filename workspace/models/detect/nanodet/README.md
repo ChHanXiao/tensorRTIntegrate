@@ -8,31 +8,44 @@
 ```
 git clone https://github.com/RangiLyu/nanodet.git
 ```
-copy [export_onnx.py](export_onnx.py) into `nanodet/tools` and run `export_onnx.py` to generate `nanodet-m.onnx`.
+copy [export.py](export.py) into `nanodet/tools` and run `export.py` to generate `nanodet-m.onnx`.
+
+not support dynamic batch
+
 ```
-python3 tools/export_onnx.py
+python3 tools/export.py
 ```
 
 ## 3.TRT
 
 **INPUT**
 
-[batch_size,3,320,320]
+[1,3,320,320]
 
 **OUTPUT**
 
-[batch_size,1600,80]
+[1,1600,80]
 
-[batch_size,400,80]
+[1,400,80]
 
-[batch_size,100,80]
+[1,100,80]
 
-[batch_size,1600,32]
+[1,1600,32]
 
-[batch_size,400,32]
+[1,400,32]
 
-[batch_size,100,32]
+[1,100,32]
 
 ## 4.Results
 
-![](prediction.jpg)
+nanodet-m![](nanodet-m.jpg)
+
+nanodet-g![](nanodet-g.jpg)
+
+nanodet-EfficientNet-Lite0_320![](nanodet-EfficientNet-Lite0_320.jpg)
+
+nanodet-EfficientNet-Lite1_416![](nanodet-EfficientNet-Lite1_416.jpg)
+
+nanodet-EfficientNet-Lite2_512![](nanodet-EfficientNet-Lite2_512.jpg)
+
+nanodet-RepVGG-A0_416![](nanodet-RepVGG-A0_416.jpg)

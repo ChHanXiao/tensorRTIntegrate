@@ -1,0 +1,15 @@
+nanodet:
+    onnx_file:      "./models/detect/nanodet/nanodet-EfficientNet-Lite1_416-simplify.onnx"
+    engine_file:    "./models/detect/nanodet/nanodet-EfficientNet-Lite1_416-simplify.trtmodel"
+    labels_file:    "./configs/detect/coco.names"
+    maxBatchSize:   1
+    input_Dim:      [[1,3,416,416],[1,3,416,416],[1,3,416,416]]
+    strides:        [8, 16, 32]
+    reg_max:        10
+    obj_threshold:  0.4
+    nms_threshold:  0.6
+    max_objs:       100
+    num_classes:    80
+    mean:           [127.0, 127.0, 127.0]
+    std:            [128.0, 128.0, 128.0]
+    scale:          1.

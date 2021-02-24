@@ -26,7 +26,6 @@ public:
 private:
 	vector<int> strides_;
 	vector<HeadInfo> heads_info_;
-	vector<int> num_anchors_;
 	map<int, string> detect_labels_;
 	int reg_max_ = 7;
 };

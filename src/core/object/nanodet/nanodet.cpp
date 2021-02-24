@@ -10,7 +10,7 @@ NanoDet::NanoDet(const string &config_file) {
 	maxBatchSize_ = config["maxBatchSize"].as<int>();
 	input_Dim_ = config["input_Dim"].as<std::vector<std::vector<int>>>();
 	strides_ = config["strides"].as<std::vector<int>>();
-	num_anchors_ = config["num_anchors"].as<std::vector<int>>();
+	reg_max_ = config["reg_max"].as<int>();
 	obj_threshold_ = config["obj_threshold"].as<float>();
 	nms_threshold_ = config["nms_threshold"].as<float>();
 	max_objs_ = config["max_objs"].as<int>();
@@ -19,16 +19,17 @@ NanoDet::NanoDet(const string &config_file) {
 	std_ = config["std"].as<std::vector<float>>();
 	scale_ = config["scale"].as<float>();
 	detect_labels_ = ccutil::readCOCOLabel(labels_file_);
-	assert(strides_.size() == num_anchors_.size());
+
 	assert(num_classes_ == detect_labels_.size());
 
 	heads_info_ = {
 		// cls_pred|dis_pred|stride
-			{"792", "795",    8},
-			{"814", "817",   16},
-			{"836", "839",   32},
+			{"output1", "output4",    8},
+			{"output2", "output5",   16},
+			{"output3", "output6",   32},
 	};
-	head_out_ = { "792", "814", "836", "795", "817", "839" };
+	head_out_ = { "output1", "output2", "output3", "output4", "output5", "output6" };
+
 	LoadEngine();
 }
 
@@ -150,6 +151,7 @@ int NanoDet::EngineInference(const Mat& image, vector<ccutil::BBox>* result) {
 	return 0;
 }
 
+// Not Support Dynamic Input 
 int NanoDet::EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccutil::BBox>>* result) {
 
 	if (engine_ == nullptr) {
