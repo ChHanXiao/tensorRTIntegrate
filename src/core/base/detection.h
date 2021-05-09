@@ -15,6 +15,7 @@ namespace ObjectDetection {
 		void PrepareImage(const Mat& image, int numIndex, const shared_ptr<TRTInfer::Tensor>& tensor);
 		void PostProcess(vector<ccutil::BBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize = 15 * 15);
 		void PostProcess(vector<ccutil::FaceBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize = 1);
+		void PostProcess(vector<ccutil::LPRBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize = 1);
 
 	public:
 		string labels_file_;

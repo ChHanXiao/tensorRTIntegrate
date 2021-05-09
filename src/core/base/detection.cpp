@@ -70,5 +70,30 @@ namespace ObjectDetection {
 		}
 		objs = keep;
 	}
+	void Detection::PostProcess(vector<ccutil::LPRBox>& objs, const Size& imageSize, const Size& netInputSize, float minsize) {
+		float sw = netInputSize.width / (float)imageSize.width;
+		float sh = netInputSize.height / (float)imageSize.height;
+		float scale_size = std::min(sw, sh);
+
+		vector<ccutil::LPRBox> keep;
+
+		for (int i = 0; i < objs.size(); ++i) {
+			auto& obj = objs[i];
+			obj.x = std::max(0.0f, std::min(obj.x / scale_size, imageSize.width - 1.0f));
+			obj.y = std::max(0.0f, std::min(obj.y / scale_size, imageSize.height - 1.0f));
+			obj.r = std::max(0.0f, std::min(obj.r / scale_size, imageSize.width - 1.0f));
+			obj.b = std::max(0.0f, std::min(obj.b / scale_size, imageSize.height - 1.0f));
+
+			for (auto &k : obj.landmark) {
+				k.x /= scale_size;
+				k.y /= scale_size;
+			}
+
+			if (obj.area() > minsize)
+				keep.emplace_back(obj);
+
+		}
+		objs = keep;
+	}
 
 }

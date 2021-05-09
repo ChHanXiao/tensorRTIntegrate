@@ -29,6 +29,8 @@
     <ClCompile Include="src\core\face\landmark\landmark.cpp" />
     <ClCompile Include="src\core\face\recognize\aligner.cpp" />
     <ClCompile Include="src\core\face\recognize\arcface.cpp" />
+    <ClCompile Include="src\core\LPR\detect\retinalp.cpp" />
+    <ClCompile Include="src\core\LPR\recognize\lprnet.cpp" />
     <ClCompile Include="src\core\object\centernet\centernet.cpp" />
     <ClCompile Include="src\core\object\nanodet\nanodet.cpp" />
     <ClCompile Include="src\core\object\object_engine.cpp" />
@@ -73,6 +75,8 @@
     <ClInclude Include="src\core\face\landmark\landmark.h" />
     <ClInclude Include="src\core\face\recognize\aligner.h" />
     <ClInclude Include="src\core\face\recognize\arcface.h" />
+    <ClInclude Include="src\core\LPR\detect\retinalp.h" />
+    <ClInclude Include="src\core\LPR\recognize\lprnet.h" />
     <ClInclude Include="src\core\object\centernet\centernet.h" />
     <ClInclude Include="src\core\object\nanodet\nanodet.h" />
     <ClInclude Include="src\core\object\object_engine.h" />
@@ -82,6 +86,7 @@
     <ClInclude Include="src\infer\dbface_backend.hpp" />
     <ClInclude Include="src\infer\nanodet_backend.hpp" />
     <ClInclude Include="src\infer\retinaface_backend.hpp" />
+    <ClInclude Include="src\infer\retinalp_backend.hpp" />
     <ClInclude Include="src\infer\task_pool.hpp" />
     <ClInclude Include="src\infer\trt_backend.hpp" />
     <ClInclude Include="src\infer\trt_infer.hpp" />
@@ -128,6 +133,7 @@
     <CudaCompile Include="src\infer\dbface_backend.cu" />
     <CudaCompile Include="src\infer\nanodet_backend.cu" />
     <CudaCompile Include="src\infer\retinaface_backend.cu" />
+    <CudaCompile Include="src\infer\retinalp_backend.cu" />
     <CudaCompile Include="src\infer\trt_backend.cpp" />
     <CudaCompile Include="src\infer\trt_infer_norm.cu" />
     <CudaCompile Include="src\infer\yolov5_detect_backend.cu" />

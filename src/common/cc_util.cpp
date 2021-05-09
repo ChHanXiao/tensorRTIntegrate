@@ -1267,6 +1267,30 @@ namespace ccutil{
 		return out;
 	}
 
+	vector<LPRBox> nms(vector<LPRBox>& objs, float iou_threshold) {
+
+		std::sort(objs.begin(), objs.end(), [](const LPRBox& a, const LPRBox& b) {
+			return a.score > b.score;
+		});
+
+		vector<LPRBox> out;
+		vector<int> flags(objs.size());
+		for (int i = 0; i < objs.size(); ++i) {
+			if (flags[i] == 1) continue;
+
+			out.push_back(objs[i]);
+			flags[i] = 1;
+			for (int k = i + 1; k < objs.size(); ++k) {
+				if (flags[k] == 0) {
+					float iouUnion = objs[i].iouOf(objs[k]);
+					if (iouUnion > iou_threshold)
+						flags[k] = 1;
+				}
+			}
+		}
+		return out;
+	}
+
 	
 
 

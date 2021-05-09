@@ -74,6 +74,15 @@
     <Filter Include="src\core\object\centernet">
       <UniqueIdentifier>{01625c61-240a-4ec5-b759-6b0a642028a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\core\LPR">
+      <UniqueIdentifier>{79c65285-d4c2-4cd6-b561-219067b1ac09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\LPR\detect">
+      <UniqueIdentifier>{0b40ff7e-71c1-47cc-ba46-a9d1fdd5e178}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\LPR\recognize">
+      <UniqueIdentifier>{ff55ed54-281d-4371-803d-36ee3147b4cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\import_lib.cpp">
@@ -186,6 +195,12 @@
     </ClCompile>
     <ClCompile Include="src\core\face\landmark\landmark.cpp">
       <Filter>src\core\face\landmark</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\LPR\detect\retinalp.cpp">
+      <Filter>src\core\LPR\detect</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\LPR\recognize\lprnet.cpp">
+      <Filter>src\core\LPR\recognize</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -387,6 +402,15 @@
     <ClInclude Include="src\core\face\landmark\landmark.h">
       <Filter>src\core\face\landmark</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\LPR\detect\retinalp.h">
+      <Filter>src\core\LPR\detect</Filter>
+    </ClInclude>
+    <ClInclude Include="src\infer\retinalp_backend.hpp">
+      <Filter>src\infer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\LPR\recognize\lprnet.h">
+      <Filter>src\core\LPR\recognize</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\infer\trt_infer_norm.cu">
@@ -438,6 +462,9 @@
       <Filter>src\infer</Filter>
     </CudaCompile>
     <CudaCompile Include="src\infer\dbface_backend.cu">
+      <Filter>src\infer</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\infer\retinalp_backend.cu">
       <Filter>src\infer</Filter>
     </CudaCompile>
   </ItemGroup>

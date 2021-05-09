@@ -93,8 +93,13 @@ namespace ccutil{
 		std::string name_;
 		float sim_;
 	};
+	//LPR
+	struct LPRBox : BBox {
+		cv::Point2f landmark[4];
 
-
+		LPRBox() {}
+		LPRBox(const ccutil::BBox& other) :ccutil::BBox(other) {}
+	};
 
 	string tostr(int val);
 	string tostr(unsigned int val);
@@ -270,6 +275,7 @@ namespace ccutil{
 	vector<BBox> nms(vector<BBox>& objs, float iou_threshold);
 	vector<BBox> nmsMinIoU(vector<BBox>& objs, float iou_threshold);
 	vector<FaceBox> nms(vector<FaceBox>& objs, float iou_threshold);
+	vector<LPRBox> nms(vector<LPRBox>& objs, float iou_threshold);
 	//bbox softnms with linear method
 	vector<BBox> softnms(vector<BBox>& B, float iou_threshold);
 

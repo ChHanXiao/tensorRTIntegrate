@@ -1,6 +1,9 @@
+[库和模型](./lean/README.md)
+
 日志
 
-- 添加nanodet多种backbone，[EfficientNet-lite](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet/lite) [Rep-VGG](https://github.com/DingXiaoH/RepVGG)，因为有reshape层，dynamic batch不支持
+- 添加[LPR](./workspace/models/LPR/README.md)，车牌检测[模型来源](https://github.com/zeusees/License-Plate-Detector) [retinaLP](https://github.com/gm19900510/Pytorch_Retina_License_Plate)检测框和关键点，车牌识别[LPRNet](https://github.com/sirius-ai/LPRNet_Pytorch)
+- 添加nanodet多种backbone，[EfficientNet-lite](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet/lite) [Rep-VGG](https://github.com/DingXiaoH/RepVGG)，dynamic batch不支持
 - 添加原工程的[centernet](./workspace/models/detect/centernet/README.md)、[dbface](./workspace/models/face/dbface/README.md)，dynamic batch 未支持
 - 添加原工程插件，解析不用Tensorrt中nvonnxparser.lib，加入onnx-tensorrt便于[插件修改](./README.onnx.plugin.md)
 - 添加人脸相似度计算，参考[mnn_example](https://github.com/MirrorYuChen/mnn_example)整合人脸代码，检测-对齐-关键点-性别|年龄-相似度

@@ -15,7 +15,8 @@
 #include "core/face/recognize/arcface.h"
 #include "core/face/landmark/landmark.h"
 #include "core/face/attribute/gender_age.h"
-
+#include "core/LPR/detect/retinalp.h"
+#include "core/LPR/recognize/lprnet.h"
 //using namespace std;
 
 int TestAttribute() {
@@ -357,7 +358,7 @@ int TestCenterFace() {
 }
 
 int TestRetinaFace() {
-#if 1
+#if 0
 	cv::Mat image = cv::imread("imgs/face1.jpg");
 	RetinaFace face("configs/face/retinaface.yaml");
 	std::vector<ccutil::FaceBox> result;
@@ -458,9 +459,75 @@ int TestGenderAge() {
 	return 0;
 }
 
+int TestRetinaLP() {
+#if 0
+	cv::Mat image = cv::imread("imgs/LPR/1.jpg");
+	RetinaLP det_lp("configs/LPR/retinalp.yaml");
+	std::vector<ccutil::LPRBox> result;
+	det_lp.EngineInference(image, &result);
+
+
+	for (int i = 0; i < result.size(); ++i) {
+		auto& obj = result[i];
+		ccutil::drawbbox(image, obj);
+		for (int k = 0; k < 4; k++)
+		{
+			cv::circle(image, obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
+		}
+	}
+	imwrite(ccutil::format("results/lp.jpg"), image);
+
+#else
+	std::vector<cv::Mat> images{ cv::imread("imgs/LPR/1.jpg"),cv::imread("imgs/LPR/2.jpg") };
+	RetinaLP det_lp("configs/LPR/retinalp.yaml");
+	std::vector<std::vector<ccutil::LPRBox>> results;
+	det_lp.EngineInferenceOptim(images, &results);
+
+	for (int j = 0; j < images.size(); ++j) {
+		auto& objs = results[j];
+		INFO("objs.length = %d", objs.size());
+		for (int i = 0; i < objs.size(); ++i) {
+			auto& obj = objs[i];
+			string label = "lp";
+			ccutil::drawbbox(images[j], obj, ccutil::DrawType::Custom, label);
+			for (int k = 0; k < 4; k++)
+			{
+				cv::circle(images[j], obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
+			}
+		}
+		imwrite(ccutil::format("results/%d.lp.jpg", j), images[j]);
+	}
+
+#endif
+	return 0;
+}
+
+int TestLPRNet() {
+
+#if 0
+	cv::Mat image = cv::imread("imgs/LPR/3.jpg");
+	LPRNet lprnet("configs/LPR/lprnet.yaml");
+	wstring result;
+	lprnet.EngineInference(image, &result);
+	wcout.imbue(std::locale("chs"));
+	wcout << result << endl;
+
+#else
+	std::vector<cv::Mat> images{ cv::imread("imgs/LPR/3.jpg"),cv::imread("imgs/LPR/4.jpg") };
+	LPRNet lprnet("configs/LPR/lprnet.yaml");
+	vector<wstring> results;
+	lprnet.EngineInferenceOptim(images, &results);
+	wcout.imbue(std::locale("chs"));
+	for (int j = 0; j < images.size(); ++j) {
+		wcout << results[j] << endl;
+	}
+#endif
+	return 0;
+}
+
 
 int main() {
-	TestNanoDet();
+	TestRetinaLP();
 	
 	INFO("done.");
 

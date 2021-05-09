@@ -611,7 +611,7 @@ namespace TRTInfer {
 			{
 				offset = 0;
 			}else if (dims.nbDims == 3) { 
-				offset = 1;
+				offset = 0;
 			}else if (dims.nbDims == 2) {
 				offset = 0;
 			}else{}
