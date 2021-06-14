@@ -48,7 +48,7 @@ namespace ccutil{
 		float score_;
 	};
 
-	//detector
+	//detecter
 	struct BBox{
 
 		float score = 0; float x = 0; float y = 0; float r = 0; float b = 0;

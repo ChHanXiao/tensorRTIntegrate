@@ -22,14 +22,18 @@ LPRNet permute[batch,68,18] to [batch,18,68]
 
 ## 3.TRT
 
+RetinaLP
+
+**INPUT**
+
+[batch,3,1280,1280]
+
+LPRNet 
+
 **INPUT**
 
 [batch,3,24,94]
 
-**OUTPUT**
-
-[batch,18,68] 
-
 ## 4.Results
 
-![](prediction.jpg)
+![](prediction_det.jpg)

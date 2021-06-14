@@ -152,8 +152,13 @@ int RetinaLP::EngineInferenceOptim(const vector<Mat>& images, vector<vector<ccut
 		imagesSize.emplace_back(images[i].size());
 	}
 	ccutil::Timer time_forward;
-	engine_->forward();
-	INFO("engine forward cost = %f", time_forward.end());
+	int i = 1000;
+	while (i > 0){
+		engine_->forward();
+		i--;
+	}
+	
+	INFO("engine forward cost = %f", time_forward.end()/1000);
 	ccutil::Timer time_decode;
 
 	auto outconf = engine_->tensor("output2");

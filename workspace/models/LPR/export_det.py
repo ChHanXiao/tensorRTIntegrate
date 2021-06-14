@@ -12,7 +12,7 @@ device = torch.device("cpu")
 net = Retina(cfg=cfg_mnet)
 net.load_state_dict(torch.load(model_path, map_location=device))
 net.eval()
-dummy_input = torch.randn(1, 3, 640, 640).to(device)
+dummy_input = torch.randn(1, 3, 1280, 1280).to(device)
 onnx_output = 'test.onnx'
 input_names = ['input']
 output_names = ['output1', 'output2', 'output3']

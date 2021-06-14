@@ -1,0 +1,3 @@
+lpr:
+    detect:         "./configs/LPR/retinalp.yaml"
+    recognize:      "./configs/LPR/lprnet.yaml"

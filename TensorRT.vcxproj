@@ -15,6 +15,7 @@
     <ClCompile Include="src\caffeplugin\caffeplugin.cpp" />
     <ClCompile Include="src\common\cc_util.cpp" />
     <ClCompile Include="src\common\json.cpp" />
+    <ClCompile Include="src\common\putText.cpp" />
     <ClCompile Include="src\common\trt_common.cpp" />
     <ClCompile Include="src\core\base\detection.cpp" />
     <ClCompile Include="src\core\base\trtmodel.cpp" />
@@ -30,6 +31,8 @@
     <ClCompile Include="src\core\face\recognize\aligner.cpp" />
     <ClCompile Include="src\core\face\recognize\arcface.cpp" />
     <ClCompile Include="src\core\LPR\detect\retinalp.cpp" />
+    <ClCompile Include="src\core\LPR\lpr_engine.cpp" />
+    <ClCompile Include="src\core\LPR\recognize\crop_lp.cpp" />
     <ClCompile Include="src\core\LPR\recognize\lprnet.cpp" />
     <ClCompile Include="src\core\object\centernet\centernet.cpp" />
     <ClCompile Include="src\core\object\nanodet\nanodet.cpp" />
@@ -61,6 +64,7 @@
     <ClInclude Include="src\caffeplugin\plugins\TestPlugin.hpp" />
     <ClInclude Include="src\common\cc_util.hpp" />
     <ClInclude Include="src\common\json.hpp" />
+    <ClInclude Include="src\common\putText.h" />
     <ClInclude Include="src\common\trt_common.hpp" />
     <ClInclude Include="src\core\base\detection.h" />
     <ClInclude Include="src\core\base\trtmodel.h" />
@@ -76,6 +80,8 @@
     <ClInclude Include="src\core\face\recognize\aligner.h" />
     <ClInclude Include="src\core\face\recognize\arcface.h" />
     <ClInclude Include="src\core\LPR\detect\retinalp.h" />
+    <ClInclude Include="src\core\LPR\lpr_engine.h" />
+    <ClInclude Include="src\core\LPR\recognize\crop_lp.h" />
     <ClInclude Include="src\core\LPR\recognize\lprnet.h" />
     <ClInclude Include="src\core\object\centernet\centernet.h" />
     <ClInclude Include="src\core\object\nanodet\nanodet.h" />

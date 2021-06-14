@@ -1,9 +1,12 @@
 ﻿#include <fstream>
 #include <filesystem>
 #include "common/cc_util.hpp"
+#include "putText.h"
 #include "infer/trt_infer.hpp"
 
 #include "core/face/face_engine.h"
+#include "core/LPR/lpr_engine.h"
+
 #include "core/object/object_engine.h"
 #include "core/classifier/ghostnet.h"
 #include "core/object/centernet/centernet.h"
@@ -32,7 +35,7 @@ int TestAttribute() {
 			keypoints.emplace_back(obj.landmark[i]);
 		}
 		cv::Mat img_face = image(obj.box()).clone();
-		imwrite(ccutil::format("results/%d.img_face.jpg", i), img_face);
+		cv::imwrite(ccutil::format("results/%d.img_face.jpg", i), img_face);
 		cv::Mat face_aligned;
 		face.AlignFace(image, keypoints, &face_aligned);
 		vector<cv::Point2f> keypoints106;
@@ -48,13 +51,13 @@ int TestAttribute() {
 		face.AttrGenderAge(face_aligned, &attributes);
 		string attrGenderAge = ccutil::format("%d/%d", attributes.gender, attributes.age);
 		cv::putText(face_aligned, attrGenderAge, cv::Point(10, 30), 0, 0.7, cv::Scalar(0, 0, 255), 1, 16);
-		imwrite(ccutil::format("results/%d.face_aligned.jpg", i), face_aligned);
+		cv::imwrite(ccutil::format("results/%d.face_aligned.jpg", i), face_aligned);
 		ccutil::drawbbox(image, obj);
 		for (auto k : obj.landmark) {
 			cv::circle(image, k, 3, cv::Scalar(0, 0, 255), -1, 16);
 		}
 	}
-	imwrite(ccutil::format("results/face_det.jpg"), image);
+	cv::imwrite(ccutil::format("results/face_det.jpg"), image);
 	return 0;
 }
 
@@ -93,13 +96,11 @@ int TestObject() {
 	mirror::ObjectEngine object("configs/detect.yaml");
 	std::vector<ccutil::BBox> result;
 	object.DetectObject(image, &result);
-	
-
 	for (int i = 0; i < result.size(); ++i) {
 		auto& obj = result[i];
 		ccutil::drawbbox(image, obj);
 	}
-	imwrite(ccutil::format("results/object.jpg"), image);
+	cv::imwrite(ccutil::format("results/object.jpg"), image);
 #else
 	std::vector<cv::Mat> images{ cv::imread("imgs/zidane.jpg"), cv::imread("imgs/obj2.jpg"), cv::imread("imgs/bus.jpg") }; 
 	mirror::ObjectEngine object("configs/detect.yaml");
@@ -113,7 +114,7 @@ int TestObject() {
 			auto& obj = objs[i];
 			ccutil::drawbbox(images[j], obj);
 		}
-		imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
 	}
 
 #endif
@@ -132,7 +133,7 @@ int TestClassify() {
  	auto result_name = image_labels_[result];
 	INFO("results = %s", result_name.c_str());
 	cv::putText(image, result_name, cv::Point(20, 100), 0, 2, cv::Scalar(0, 0, 255), 3, 16);
-	imwrite(ccutil::format("results/prediction.jpg"), image);
+	cv::imwrite(ccutil::format("results/prediction.jpg"), image);
 #else
 	std::vector<cv::Mat> images{ cv::imread("imgs/train.jpg"),cv::imread("imgs/dog.jpg") ,cv::imread("imgs/cat.jpg") ,cv::imread("imgs/eagle.jpg") };
 	GhostNet ghostnet("configs/classify/ghostnet-d.yaml");
@@ -144,7 +145,7 @@ int TestClassify() {
 		auto result_name = image_labels_[results[j]];
 		INFO("results = %s", result_name.c_str());
 		cv::putText(images[j], result_name, cv::Point(20, 100), 0, 2, cv::Scalar(0, 0, 255), 3, 16);
-		imwrite(ccutil::format("results/%d.prediction.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.prediction.jpg", j), images[j]);
 	}
 #endif
 	return 0;
@@ -168,7 +169,7 @@ int TestNanoDet() {
 		auto& obj = result[i];
 		ccutil::drawbbox(image, obj);
 	}
-	imwrite(ccutil::format("results/object.jpg"), image);
+	cv::imwrite(ccutil::format("results/object.jpg"), image);
 #else
 	//std::vector<cv::Mat> images{ cv::imread("imgs/zidane.jpg") };
 	cv::Mat image1 = cv::imread("imgs/obj2.jpg");
@@ -196,7 +197,7 @@ int TestNanoDet() {
 			auto& obj = objs[i];
 			ccutil::drawbbox(images[j], obj);
 		}
-		imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
 	}
 
 #endif
@@ -217,7 +218,7 @@ int TestCenterNet() {
 		auto& obj = result[i];
 		ccutil::drawbbox(image, obj);
 	}
-	imwrite(ccutil::format("results/object.jpg"), image);
+	cv::imwrite(ccutil::format("results/object.jpg"), image);
 
 #else
 	std::vector<cv::Mat> images{ cv::imread("imgs/obj1.jpg"),cv::imread("imgs/obj2.jpg"),cv::imread("imgs/giraffe.jpg") };
@@ -232,7 +233,7 @@ int TestCenterNet() {
 			auto& obj = objs[i];
 			ccutil::drawbbox(images[j], obj);
 		}
-		imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
 	}
 
 #endif
@@ -251,7 +252,7 @@ int TestYOLO() {
 		auto& obj = result[i];
 		ccutil::drawbbox(image, obj);
 	}
-	imwrite(ccutil::format("results/object.jpg"), image);
+	cv::imwrite(ccutil::format("results/object.jpg"), image);
 
 #else
 	std::vector<cv::Mat> images{ cv::imread("imgs/obj1.jpg"),cv::imread("imgs/obj2.jpg"),cv::imread("imgs/giraffe.jpg") };
@@ -266,7 +267,7 @@ int TestYOLO() {
 			auto& obj = objs[i];
 			ccutil::drawbbox(images[j], obj);
 		}
-		imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.object.jpg", j), images[j]);
 	}
 
 #endif
@@ -289,7 +290,7 @@ int TestDBFace() {
 			cv::circle(image, obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
 		}
 	}
-	imwrite(ccutil::format("results/face.jpg"), image);
+	cv::imwrite(ccutil::format("results/face.jpg"), image);
 
 #else
 	std::vector<cv::Mat> images{ cv::imread("imgs/face1.jpg"),cv::imread("imgs/face2.jpg"),cv::imread("imgs/face3.jpg") };
@@ -308,7 +309,7 @@ int TestDBFace() {
 				cv::circle(images[j], obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
 			}
 		}
-		imwrite(ccutil::format("results/%d.face.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.face.jpg", j), images[j]);
 	}
 
 #endif
@@ -331,7 +332,7 @@ int TestCenterFace() {
 			cv::circle(image, obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
 		}
 	}
-	imwrite(ccutil::format("results/face.jpg"), image);
+	cv::imwrite(ccutil::format("results/face.jpg"), image);
 
 #else
 	std::vector<cv::Mat> images{ cv::imread("imgs/face1.jpg"),cv::imread("imgs/face2.jpg"),cv::imread("imgs/face3.jpg") };
@@ -350,7 +351,7 @@ int TestCenterFace() {
 				cv::circle(images[j], obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
 			}
 		}
-		imwrite(ccutil::format("results/%d.face.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.face.jpg", j), images[j]);
 	}
 
 #endif
@@ -373,7 +374,7 @@ int TestRetinaFace() {
 			cv::circle(image, obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
 		}
 	}
-	imwrite(ccutil::format("results/face.jpg"), image);
+	cv::imwrite(ccutil::format("results/face.jpg"), image);
 
 #else
 	std::vector<cv::Mat> images{ cv::imread("imgs/face1.jpg"),cv::imread("imgs/face2.jpg"),cv::imread("imgs/face3.jpg") };
@@ -392,7 +393,7 @@ int TestRetinaFace() {
 				cv::circle(images[j], obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
 			}
 		}
-		imwrite(ccutil::format("results/%d.face.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.face.jpg", j), images[j]);
 	}
 
 #endif
@@ -461,28 +462,26 @@ int TestGenderAge() {
 
 int TestRetinaLP() {
 #if 0
-	cv::Mat image = cv::imread("imgs/LPR/1.jpg");
+	cv::Mat image = cv::imread("imgs/LPR/det/1.jpg");
 	RetinaLP det_lp("configs/LPR/retinalp.yaml");
 	std::vector<ccutil::LPRBox> result;
 	det_lp.EngineInference(image, &result);
-
-
 	for (int i = 0; i < result.size(); ++i) {
 		auto& obj = result[i];
 		ccutil::drawbbox(image, obj);
-		for (int k = 0; k < 4; k++)
-		{
+		for (int k = 0; k < 4; k++) {
 			cv::circle(image, obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
 		}
 	}
 	imwrite(ccutil::format("results/lp.jpg"), image);
-
 #else
-	std::vector<cv::Mat> images{ cv::imread("imgs/LPR/1.jpg"),cv::imread("imgs/LPR/2.jpg") };
+	std::vector<cv::Mat> images{ cv::imread("imgs/LPR/det/1.jpg"),cv::imread("imgs/LPR/det/2.jpg") };
+	for (int i = 0; i < 28; i++) {
+		images.emplace_back(cv::imread("imgs/LPR/det/1.jpg"));
+	}
 	RetinaLP det_lp("configs/LPR/retinalp.yaml");
 	std::vector<std::vector<ccutil::LPRBox>> results;
 	det_lp.EngineInferenceOptim(images, &results);
-
 	for (int j = 0; j < images.size(); ++j) {
 		auto& objs = results[j];
 		INFO("objs.length = %d", objs.size());
@@ -490,30 +489,26 @@ int TestRetinaLP() {
 			auto& obj = objs[i];
 			string label = "lp";
 			ccutil::drawbbox(images[j], obj, ccutil::DrawType::Custom, label);
-			for (int k = 0; k < 4; k++)
-			{
+			for (int k = 0; k < 4; k++) {
 				cv::circle(images[j], obj.landmark[k], 2, cv::Scalar(0, 0, 255), -1, cv::LINE_8, 0);
 			}
 		}
-		imwrite(ccutil::format("results/%d.lp.jpg", j), images[j]);
+		cv::imwrite(ccutil::format("results/%d.lp.jpg", j), images[j]);
 	}
-
 #endif
 	return 0;
 }
 
 int TestLPRNet() {
-
 #if 0
-	cv::Mat image = cv::imread("imgs/LPR/3.jpg");
+	cv::Mat image = cv::imread("imgs/LPR/rec/3.jpg");
 	LPRNet lprnet("configs/LPR/lprnet.yaml");
 	wstring result;
 	lprnet.EngineInference(image, &result);
 	wcout.imbue(std::locale("chs"));
 	wcout << result << endl;
-
 #else
-	std::vector<cv::Mat> images{ cv::imread("imgs/LPR/3.jpg"),cv::imread("imgs/LPR/4.jpg") };
+	std::vector<cv::Mat> images{ cv::imread("imgs/LPR/rec/3.jpg"),cv::imread("imgs/LPR/rec/4.jpg") };
 	LPRNet lprnet("configs/LPR/lprnet.yaml");
 	vector<wstring> results;
 	lprnet.EngineInferenceOptim(images, &results);
@@ -525,11 +520,40 @@ int TestLPRNet() {
 	return 0;
 }
 
+int TestLPR() {
+	mirror::LPREngine lpr("configs/lpr.yaml");
+	std::string src_path = "./imgs/LPR/det";
+	std::vector<cv::String> file_vec;
+	cv::glob(src_path + "*.jpg", file_vec);
+	for (auto imgpath : file_vec) {
+		cv::Mat image = cv::imread(imgpath);
+		std::vector<ccutil::LPRBox> lprboxs;
+		lpr.DetectLP(image, &lprboxs);
+		for (int i = 0; i < lprboxs.size(); i++) {
+			cv::Mat image_crop;
+			lpr.CropLP(image, lprboxs[i], &image_crop);
+			wstring result;
+			lpr.RecognizeLP(image_crop, &result);
+			std::string result_c = wstringToString(result);;
+			putText::putTextZH(image, result_c.c_str(), Point(lprboxs[i].x + 10, lprboxs[i].y - 30), Scalar(0, 0, 255), 20, "微软雅黑");
+			cv::rectangle(image, lprboxs[i].tl(), lprboxs[i].rb(), Scalar(0, 255, 255), 2, 8, 0);
+			cv::circle(image, lprboxs[i].landmark[0], 5, Scalar(225, 0, 225), 3, 8);
+			cv::circle(image, lprboxs[i].landmark[1], 5, Scalar(225, 0, 225), 3, 8);
+			cv::circle(image, lprboxs[i].landmark[2], 5, Scalar(225, 0, 225), 3, 8);
+			cv::circle(image, lprboxs[i].landmark[3], 5, Scalar(225, 0, 225), 3, 8);
+			wcout.imbue(std::locale("chs"));
+			wcout << result << endl;
+		}
+		int pos = imgpath.find_last_of('\\', '/');
+		string imgname(imgpath.substr(pos + 1));
+		cv::imwrite("results/" + imgname, image);
+	}
+	return 0;
+}
+
 
 int main() {
-	TestRetinaLP();
-	
+	TestLPR();
 	INFO("done.");
-
 	return 0;
 }

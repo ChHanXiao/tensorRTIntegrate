@@ -202,6 +202,15 @@
     <ClCompile Include="src\core\LPR\recognize\lprnet.cpp">
       <Filter>src\core\LPR\recognize</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\LPR\lpr_engine.cpp">
+      <Filter>src\core\LPR</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\LPR\recognize\crop_lp.cpp">
+      <Filter>src\core\LPR\recognize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\putText.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\cc_util.hpp">
@@ -410,6 +419,15 @@
     </ClInclude>
     <ClInclude Include="src\core\LPR\recognize\lprnet.h">
       <Filter>src\core\LPR\recognize</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\LPR\lpr_engine.h">
+      <Filter>src\core\LPR</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\LPR\recognize\crop_lp.h">
+      <Filter>src\core\LPR\recognize</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\putText.h">
+      <Filter>src\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
