@@ -20,6 +20,7 @@
     <ClCompile Include="src\core\base\detection.cpp" />
     <ClCompile Include="src\core\base\trtmodel.cpp" />
     <ClCompile Include="src\core\classifier\ghostnet.cpp" />
+    <ClCompile Include="src\core\crowdcount\dm_count.cpp" />
     <ClCompile Include="src\core\face\attribute\gender_age.cpp" />
     <ClCompile Include="src\core\face\database\face_database.cpp" />
     <ClCompile Include="src\core\face\database\stream\file_stream.cpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="src\core\base\detection.h" />
     <ClInclude Include="src\core\base\trtmodel.h" />
     <ClInclude Include="src\core\classifier\ghostnet.h" />
+    <ClInclude Include="src\core\crowdcount\dm_count.h" />
     <ClInclude Include="src\core\face\attribute\gender_age.h" />
     <ClInclude Include="src\core\face\database\face_database.h" />
     <ClInclude Include="src\core\face\database\stream\file_stream.h" />

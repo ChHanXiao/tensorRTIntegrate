@@ -83,6 +83,9 @@
     <Filter Include="src\core\LPR\recognize">
       <UniqueIdentifier>{ff55ed54-281d-4371-803d-36ee3147b4cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\core\crowdcount">
+      <UniqueIdentifier>{28fdd112-59a4-45d9-9457-d39fea299ac3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\import_lib.cpp">
@@ -210,6 +213,9 @@
     </ClCompile>
     <ClCompile Include="src\common\putText.cpp">
       <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\crowdcount\dm_count.cpp">
+      <Filter>src\core\crowdcount</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -428,6 +434,9 @@
     </ClInclude>
     <ClInclude Include="src\common\putText.h">
       <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\crowdcount\dm_count.h">
+      <Filter>src\core\crowdcount</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

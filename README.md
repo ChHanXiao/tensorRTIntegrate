@@ -2,6 +2,7 @@
 
 日志
 
+- 添加人群密度计算，[DM-Count](https://github.com/cvlab-stonybrook/DM-Count)
 - 整合LPR
 - 添加[LPR](./workspace/models/LPR/README.md)，车牌检测网络[retinaLP](https://github.com/gm19900510/Pytorch_Retina_License_Plate)检测框和关键点[模型来源](https://github.com/zeusees/License-Plate-Detector)，车牌识别网络[LPRNet](https://github.com/sirius-ai/LPRNet_Pytorch)
 - 添加nanodet多种backbone，[EfficientNet-lite](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet/lite) [Rep-VGG](https://github.com/DingXiaoH/RepVGG)，dynamic batch不支持

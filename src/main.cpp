@@ -20,6 +20,7 @@
 #include "core/face/attribute/gender_age.h"
 #include "core/LPR/detect/retinalp.h"
 #include "core/LPR/recognize/lprnet.h"
+#include "core\crowdcount\dm_count.h"
 //using namespace std;
 
 int TestAttribute() {
@@ -551,9 +552,25 @@ int TestLPR() {
 	return 0;
 }
 
+int TestDMCount() {
+#if 0
+	cv::Mat image = cv::imread("imgs/crowdcount1.png");
+	DMCount crowdcount("configs/crowd_count/dm_count.yaml");
+	int result;
+	crowdcount.EngineInference(image, &result);
+
+	cv::imwrite(ccutil::format("results/dm_count.jpg"), image);
+#else
+	std::vector<cv::Mat> images{ cv::imread("imgs/crowdcount1.png"),cv::imread("imgs/crowdcount2.png") };
+	DMCount crowdcount("configs/crowd_count/dm_count.yaml");
+	vector<int> results;
+	crowdcount.EngineInferenceOptim(images, &results);
+#endif
+	return 0;
+}
 
 int main() {
-	TestLPR();
+	TestDMCount();
 	INFO("done.");
 	return 0;
 }
